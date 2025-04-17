@@ -4,7 +4,7 @@ import { EmailInputForm } from "./email-input-form";
 
 export const StarterSection = () => {
   return (
-    <div className='container mx-auto px-4 md:px-6'>
+    <div className='container mx-auto px-4 pb-12 md:px-6'>
       <div className='flex flex-col items-center text-center'>
         <Image
           alt='Landing Image'
