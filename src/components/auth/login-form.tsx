@@ -39,7 +39,7 @@ export function LoginForm() {
       setUser(updatedUser);
       document.cookie = `token=${user.Session.token}; path=/`;
       form.reset();
-      router.push("/main");
+      router.push("/main/newsletter");
     },
     onError: (error) => {
       if (error.message === "User not found.") {

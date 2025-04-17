@@ -30,7 +30,7 @@ export const Header = () => {
       {user && (
         <nav className='ml-auto flex gap-4 sm:gap-6'>
           <Link
-            href='/main'
+            href='/main/newsletter'
             className='text-sm font-medium underline-offset-4 hover:underline'
           >
             Dashboard

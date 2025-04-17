@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, Newspaper, Settings } from "lucide-react";
+import { Newspaper } from "lucide-react";
 
 import {
   Sidebar,
@@ -23,19 +23,19 @@ const navigationItems = [
   {
     title: "Newsletter",
     icon: Newspaper,
-    href: "/main",
+    href: "/main/newsletter",
     isActive: true,
   },
-  {
-    title: "Analytics",
-    icon: BarChart3,
-    href: "/main/analytics",
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    href: "/main/settings",
-  },
+  // {
+  //   title: "Analytics",
+  //   icon: BarChart3,
+  //   href: "/main/analytics",
+  // },
+  // {
+  //   title: "Settings",
+  //   icon: Settings,
+  //   href: "/main/settings",
+  // },
 ];
 
 export function AppSidebar() {

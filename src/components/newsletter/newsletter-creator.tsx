@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { timeOptions } from "@/lib/newsletter.utils";
 import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -36,15 +37,17 @@ export type NewsletterComponent = {
 };
 
 export function NewsletterCreator() {
+  // Form 1: Base Configuration
   const [title, setTitle] = useState("");
   const [interval, setInterval] = useState("weekly");
   const [time, setTime] = useState("09:00");
+  // Form 2: Components
   const [components, setComponents] = useState<NewsletterComponent[]>([]);
+
   const [showSelector, setShowSelector] = useState(false);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
     if (over && active.id !== over.id) {
       setComponents((items) => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
@@ -57,7 +60,6 @@ export function NewsletterCreator() {
 
   const handleAddComponentType = (type: "weather" | "crypto") => {
     const id = `component-${Date.now()}`;
-
     // Add a new empty component that will be in edit mode
     setComponents([
       ...components,
@@ -68,7 +70,6 @@ export function NewsletterCreator() {
         isNew: true, // Flag to indicate this is a new component that should be in edit mode
       },
     ]);
-
     setShowSelector(false);
   };
 
@@ -101,14 +102,8 @@ export function NewsletterCreator() {
       time,
       components,
     });
-    alert("Newsletter saved successfully!");
+    // TODO: add to db & redirect to newsletter page
   };
-
-  // Generate time options for selection (hourly from 00:00 to 23:00)
-  const timeOptions = Array.from({ length: 24 }, (_, i) => {
-    const hour = i.toString().padStart(2, "0");
-    return `${hour}:00`;
-  });
 
   return (
     <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
