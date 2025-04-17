@@ -1,0 +1,72 @@
+"use client";
+
+import { BarChart3, Newspaper, Settings } from "lucide-react";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@/components/ui/sidebar";
+
+import { AuthHeader } from "../auth/auth-header";
+import { AppSidebarUser } from "./app-sidebar-user/app-sidebar-user";
+
+const navigationItems = [
+  {
+    title: "Newsletter",
+    icon: Newspaper,
+    href: "/main",
+    isActive: true,
+  },
+  {
+    title: "Analytics",
+    icon: BarChart3,
+    href: "/main/analytics",
+  },
+  {
+    title: "Settings",
+    icon: Settings,
+    href: "/main/settings",
+  },
+];
+
+export function AppSidebar() {
+  return (
+    <Sidebar>
+      <SidebarHeader className='items-start border-b px-4 py-4'>
+        <AuthHeader />
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={item.isActive}>
+                    <a href={item.href}>
+                      <item.icon className='h-4 w-4' />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter className='border-t'>
+        <AppSidebarUser />
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
