@@ -17,3 +17,4 @@
 
 2. update config.ts
 3. add public/logo.png & public/auth-image.png & src/app/favicon.ico
+   x
