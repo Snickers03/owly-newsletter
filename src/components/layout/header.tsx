@@ -3,6 +3,8 @@ import Link from "next/link";
 import { APP_NAME } from "@/config";
 import { useUserStore } from "@/store/user-store";
 
+import { Button } from "../ui/button";
+
 export const Header = () => {
   const user = useUserStore((state) => state.user);
   return (
@@ -29,12 +31,14 @@ export const Header = () => {
       )}
       {user && (
         <nav className='ml-auto flex gap-4 sm:gap-6'>
-          <Link
-            href='/main/newsletter'
-            className='text-sm font-medium underline-offset-4 hover:underline'
-          >
-            Dashboard
-          </Link>
+          <Button>
+            <Link
+              href='/main/newsletter'
+              className='text-sm font-medium underline-offset-4 hover:underline'
+            >
+              Dashboard
+            </Link>
+          </Button>
         </nav>
       )}
     </header>

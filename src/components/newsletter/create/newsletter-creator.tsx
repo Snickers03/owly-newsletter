@@ -26,9 +26,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ComponentSelector } from "@/components/newsletter/component-selector";
-import { NewsletterComponentCard } from "@/components/newsletter/newsletter-component-card";
-import { NewsletterPreview } from "@/components/newsletter/newsletter-preview";
+import { ComponentSelector } from "@/components/newsletter/create/component-selector";
+import { NewsletterComponentCard } from "@/components/newsletter/create/newsletter-component-card";
+import { NewsletterPreview } from "@/components/newsletter/create/newsletter-preview";
 import { trpc } from "@/app/_trpc/client";
 
 export type NewsletterComponent = {

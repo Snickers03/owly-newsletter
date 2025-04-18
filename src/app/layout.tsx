@@ -4,7 +4,7 @@ import { APP_DESCRIPTION, APP_NAME } from "@/config";
 
 import AuthProvider from "@/components/providers/auth-provider";
 
-import Provider from "./_trpc/Provider";
+import TrpcProvider from "../components/providers/trpc-provider";
 
 import "./globals.css";
 
@@ -33,9 +33,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider>
+        <TrpcProvider>
           <AuthProvider>{children}</AuthProvider>
-        </Provider>
+        </TrpcProvider>
       </body>
     </html>
   );

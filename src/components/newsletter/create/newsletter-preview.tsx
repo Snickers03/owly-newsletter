@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import type { NewsletterComponent } from "@/components/newsletter/newsletter-creator";
+import type { NewsletterComponent } from "@/components/newsletter/create/newsletter-creator";
 
 interface NewsletterPreviewProps {
   title: string;
