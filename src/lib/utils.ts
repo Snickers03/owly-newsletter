@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import moment from "moment";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -18,4 +19,9 @@ export const toNormalCase = (str: string) => {
 export const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(date);
+};
+
+export const formatDate2 = (date: Date | null): string => {
+  if (!date) return "-";
+  return moment(date).format("DD.MM.YYYY");
 };

@@ -1,12 +1,13 @@
 "use client";
 
-import { Cloud, CreditCard, X } from "lucide-react";
+import { IComponentType } from "@/types";
+import { Cloud, CreditCard, Quote, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ComponentSelectorProps {
-  onSelectType: (type: "weather" | "crypto") => void;
+  onSelectType: (type: IComponentType) => void;
   onCancel: () => void;
 }
 
@@ -22,6 +23,12 @@ const componentOptions = [
     title: "Cryptocurrency",
     icon: <CreditCard className='h-6 w-6 text-green-500' />,
     bgColor: "bg-green-100",
+  },
+  {
+    type: "quote" as const,
+    title: "Quote",
+    icon: <Quote className='h-6 w-6 text-yellow-500' />,
+    bgColor: "bg-yellow-100",
   },
 ];
 
@@ -40,14 +47,14 @@ export function ComponentSelector({
         </div>
       </CardHeader>
       <CardContent>
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='grid grid-cols-3 gap-4'>
           {componentOptions.map((option) => (
             <div
               key={option.type}
               className='group cursor-pointer'
               onClick={() => onSelectType(option.type)}
             >
-              <Card className='group-hover:border-primary border-2 transition-all group-hover:shadow-md'>
+              <Card className='group-hover:border-primary border-1 transition-all group-hover:shadow-md'>
                 <CardContent className='flex flex-col items-center text-center'>
                   <div
                     className={`mb-3 flex h-12 w-12 items-center justify-center rounded-full ${option.bgColor}`}

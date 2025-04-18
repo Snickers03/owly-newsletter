@@ -1,13 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { timeOptions } from "@/lib/newsletter.utils";
+import { useUserStore } from "@/store/user-store";
+import { IComponentType } from "@/types";
 import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { IntervalType } from "@prisma/client";
 import { PlusCircle, Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -25,21 +29,25 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ComponentSelector } from "@/components/newsletter/component-selector";
 import { NewsletterComponentCard } from "@/components/newsletter/newsletter-component-card";
 import { NewsletterPreview } from "@/components/newsletter/newsletter-preview";
+import { trpc } from "@/app/_trpc/client";
 
 export type NewsletterComponent = {
   id: string;
-  type: "weather" | "crypto";
+  type: IComponentType;
   params: {
     city?: string;
     currency?: string;
+    quote?: string;
   };
   isNew?: boolean;
 };
 
 export function NewsletterCreator() {
+  const user = useUserStore((state) => state.user);
+  const router = useRouter();
   // Form 1: Base Configuration
   const [title, setTitle] = useState("");
-  const [interval, setInterval] = useState("weekly");
+  const [interval, setInterval] = useState<string>("weekly");
   const [time, setTime] = useState("09:00");
   // Form 2: Components
   const [components, setComponents] = useState<NewsletterComponent[]>([]);
@@ -58,7 +66,7 @@ export function NewsletterCreator() {
     }
   };
 
-  const handleAddComponentType = (type: "weather" | "crypto") => {
+  const handleAddComponentType = (type: IComponentType) => {
     const id = `component-${Date.now()}`;
     // Add a new empty component that will be in edit mode
     setComponents([
@@ -94,21 +102,35 @@ export function NewsletterCreator() {
     );
   };
 
+  const { mutate: createNewsletter } = trpc.newsletter.create.useMutation({
+    onSuccess: (newsletter) => {
+      router.push("/main/newsletter");
+    },
+    onError: (error) => {
+      // Handle error (e.g., show an error message)
+      console.error("Error creating newsletter:", error);
+    },
+  });
+
   const handleSave = () => {
-    // Logic to save the newsletter would be implemented here
-    console.log({
+    const newsletterData = {
+      userId: user?.id ?? "",
       title,
-      interval,
+      interval: interval as IntervalType,
       time,
-      components,
-    });
-    // TODO: add to db & redirect to newsletter page
+      components: components.map((component) => ({
+        type: component.type,
+        params: component.params,
+      })),
+    };
+    createNewsletter(newsletterData);
   };
 
   return (
     <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
       {/* Left Column - Configuration */}
       <div className='space-y-6'>
+        {/* Form 1: Base Configuration */}
         <Card>
           <CardContent>
             <div className='space-y-4'>
@@ -157,7 +179,7 @@ export function NewsletterCreator() {
             </div>
           </CardContent>
         </Card>
-
+        {/* Form 2: Components */}
         <div className='space-y-4'>
           <div className='flex items-center justify-between'>
             <h2 className='text-xl font-semibold'>Newsletter Components</h2>

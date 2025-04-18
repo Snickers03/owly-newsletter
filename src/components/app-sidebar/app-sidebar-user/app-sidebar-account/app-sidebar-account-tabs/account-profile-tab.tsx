@@ -55,13 +55,8 @@ export function ProfileTab({ user, closeDialog }: ProfileTabProps) {
   }, [name, avatarUrl, user.name, user.avatarUrl]);
 
   const { mutate: updateProfile } = trpc.auth.updateProfile.useMutation({
-    onSuccess: (data) => {
-      // TODO: weird string / datetime bug
-      const updatedUser = {
-        ...data,
-        created: new Date(data.created),
-      };
-      updateUser(updatedUser);
+    onSuccess: (user) => {
+      updateUser(user);
       closeDialog();
     },
     onError: (error) => {

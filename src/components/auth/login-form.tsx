@@ -27,16 +27,7 @@ export function LoginForm() {
 
   const { mutate: login } = trpc.auth.login.useMutation({
     onSuccess: (user) => {
-      // TODO: weird string / datetime bug
-      const updatedUser = {
-        ...user,
-        created: new Date(user.created),
-        Session: {
-          ...user.Session,
-          expires: new Date(user.Session.expires),
-        },
-      };
-      setUser(updatedUser);
+      setUser(user);
       document.cookie = `token=${user.Session.token}; path=/`;
       form.reset();
       router.push("/main/newsletter");

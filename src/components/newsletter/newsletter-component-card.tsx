@@ -8,6 +8,7 @@ import {
   CreditCard,
   GripVertical,
   Pencil,
+  Quote,
   Save,
   Trash,
 } from "lucide-react";
@@ -33,7 +34,10 @@ import type { NewsletterComponent } from "@/components/newsletter/newsletter-cre
 interface NewsletterComponentCardProps {
   component: NewsletterComponent;
   onRemove: (id: string) => void;
-  onUpdate: (id: string, params: { city?: string; currency?: string }) => void;
+  onUpdate: (
+    id: string,
+    params: { city?: string; currency?: string; quote?: string },
+  ) => void;
   initialEditMode?: boolean;
 }
 
@@ -46,8 +50,8 @@ export function NewsletterComponentCard({
   const [isEditing, setIsEditing] = useState(initialEditMode);
   const [city, setCity] = useState(component.params.city || "");
   const [currency, setCurrency] = useState(component.params.currency || "");
+  const [quote, setQuote] = useState(component.params.quote || "");
 
-  // Set editing mode when component is initially rendered with initialEditMode=true
   useEffect(() => {
     if (initialEditMode) {
       setIsEditing(true);
@@ -67,6 +71,8 @@ export function NewsletterComponentCard({
       onUpdate(component.id, { city });
     } else if (component.type === "crypto") {
       onUpdate(component.id, { currency });
+    } else if (component.type === "quote") {
+      onUpdate(component.id, { quote });
     }
     setIsEditing(false);
   };
@@ -85,11 +91,17 @@ export function NewsletterComponentCard({
         <div className='flex items-center'>
           {component.type === "weather" ? (
             <Cloud className='mr-2 h-5 w-5 text-blue-500' />
-          ) : (
+          ) : component.type === "crypto" ? (
             <CreditCard className='mr-2 h-5 w-5 text-green-500' />
+          ) : (
+            <Quote className='mr-2 h-5 w-5 text-purple-500' />
           )}
           <span className='font-medium'>
-            {component.type === "weather" ? "Weather" : "Cryptocurrency"}
+            {component.type === "weather"
+              ? "Weather"
+              : component.type === "crypto"
+                ? "Cryptocurrency"
+                : "Quote"}
           </span>
         </div>
         <div className='flex space-x-1'>
@@ -159,6 +171,16 @@ export function NewsletterComponentCard({
                 <span className='font-medium'>{component.params.currency}</span>
               </p>
             )}
+
+            {component.type === "quote" && (
+              <blockquote className='text-muted-foreground italic'>
+                “Quote”
+                <br />
+                <span className='text-foreground mt-2 block text-right text-sm'>
+                  – "Author"
+                </span>
+              </blockquote>
+            )}
           </div>
         )}
       </CardContent>
@@ -170,10 +192,8 @@ export function NewsletterComponentCard({
             size='sm'
             onClick={() => {
               if (component.isNew) {
-                // If it's a new component and user cancels, remove it
                 onRemove(component.id);
               } else {
-                // Otherwise just exit edit mode
                 setIsEditing(false);
               }
             }}

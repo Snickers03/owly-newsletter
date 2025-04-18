@@ -16,15 +16,7 @@ const AuthProvider = ({ children }: Props) => {
 
   const { mutate: loginWithToken } = trpc.auth.loginWithToken.useMutation({
     onSuccess: (user) => {
-      const updatedUser = {
-        ...user,
-        created: new Date(user.created),
-        Session: {
-          ...user.Session,
-          expires: new Date(user.Session.expires),
-        },
-      };
-      setUser(updatedUser);
+      setUser(user);
     },
     onError: () => {
       Cookies.remove("token");

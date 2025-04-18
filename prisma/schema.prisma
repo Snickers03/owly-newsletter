@@ -24,6 +24,8 @@ model User {
   avatarUrl          String?
   created            DateTime  @default(now())
   Session            Session[]
+
+  Newsletter Newsletter[]
 }
 
 model Session {
@@ -33,4 +35,66 @@ model Session {
   expires DateTime
   valid   Boolean  @default(true)
   User    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Newsletter {
+  id         String       @id @default(uuid())
+  title      String
+  interval   IntervalType
+  time       String
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  components Component[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Component {
+  id           String        @id @default(uuid())
+  type         ComponentType
+  order        Int
+  newsletter   Newsletter    @relation(fields: [newsletterId], references: [id], onDelete: Cascade)
+  newsletterId String
+
+  weather WeatherParams?
+  crypto  CryptoParams?
+  quote   QuoteParams?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum IntervalType {
+  daily
+  weekly
+  monthly
+}
+
+enum ComponentType {
+  weather
+  crypto
+  quote
+}
+
+model WeatherParams {
+  id          String    @id @default(uuid())
+  city        String
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId String    @unique
+}
+
+model CryptoParams {
+  id          String    @id @default(uuid())
+  currency    String
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId String    @unique
+}
+
+model QuoteParams {
+  id          String    @id @default(uuid())
+  quote       String
+  author      String
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId String    @unique
 }

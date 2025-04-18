@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { formatDate, toNormalCase } from "@/lib/utils";
+import { formatDate2, toNormalCase } from "@/lib/utils";
+import { Newsletter } from "@prisma/client";
 import { Calendar, Clock, Edit, MoreHorizontal, Trash } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -21,29 +22,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface NewsletterCardProps {
-  newsletter: {
-    id: string;
-    title: string;
-    interval: string;
-    time: string;
-    components: Array<{
-      type: string;
-      params: {
-        city?: string;
-        currency?: string;
-      };
-    }>;
-    createdAt: string;
-    subscribers: number;
-  };
+interface Props {
+  newsletter: Newsletter & { components: any[] };
+  deleteNewsletter: (id: string) => void;
 }
 
-export function NewsletterCard({ newsletter }: NewsletterCardProps) {
-  const handleDelete = () => {
-    console.log("TODO: Delete newsletter");
-  };
-
+export function NewsletterCard({ newsletter, deleteNewsletter }: Props) {
   return (
     <Card className='overflow-hidden pb-0 transition-shadow hover:shadow-md'>
       <CardHeader className='pb-2'>
@@ -67,7 +51,7 @@ export function NewsletterCard({ newsletter }: NewsletterCardProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className='text-destructive'
-                onClick={handleDelete}
+                onClick={() => deleteNewsletter(newsletter.id)}
               >
                 <Trash className='mr-2 h-4 w-4' />
                 Delete
@@ -100,7 +84,7 @@ export function NewsletterCard({ newsletter }: NewsletterCardProps) {
       </CardContent>
       <CardFooter className='bg-muted/30 border-t px-6 py-3'>
         <div className='text-muted-foreground flex w-full items-center justify-between text-xs'>
-          <span>Created {formatDate(newsletter.createdAt)}</span>
+          <span>Created {formatDate2(newsletter.createdAt)}</span>
           {/* <Link
             href={`/main/newsletter/stats/${newsletter.id}`}
             className='text-primary hover:underline'

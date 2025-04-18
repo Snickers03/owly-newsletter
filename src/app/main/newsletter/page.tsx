@@ -1,77 +1,34 @@
+"use client";
+
 import Link from "next/link";
+import { useUserStore } from "@/store/user-store";
 import { PlusCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/main-layout";
 import { NewsletterCard } from "@/components/newsletter/newsletter-card";
-
-// Sample newsletter data for demonstration
-const sampleNewsletters = [
-  {
-    id: "1",
-    title: "Daily Tech Updates",
-    interval: "daily",
-    time: "08:00",
-    components: [
-      { type: "weather", params: { city: "San Francisco" } },
-      { type: "crypto", params: { currency: "Bitcoin" } },
-    ],
-    createdAt: "2023-04-15",
-    subscribers: 128,
-  },
-  {
-    id: "2",
-    title: "Weekly Market Insights",
-    interval: "weekly",
-    time: "09:00",
-    components: [
-      { type: "crypto", params: { currency: "Ethereum" } },
-      { type: "crypto", params: { currency: "Bitcoin" } },
-    ],
-    createdAt: "2023-03-22",
-    subscribers: 256,
-  },
-  {
-    id: "3",
-    title: "Travel Weather",
-    interval: "daily",
-    time: "07:00",
-    components: [
-      { type: "weather", params: { city: "New York" } },
-      { type: "weather", params: { city: "London" } },
-      { type: "weather", params: { city: "Tokyo" } },
-    ],
-    createdAt: "2023-05-01",
-    subscribers: 89,
-  },
-  {
-    id: "4",
-    title: "Crypto Portfolio Tracker",
-    interval: "daily",
-    time: "18:00",
-    components: [
-      { type: "crypto", params: { currency: "Bitcoin" } },
-      { type: "crypto", params: { currency: "Ethereum" } },
-      { type: "crypto", params: { currency: "Monero" } },
-    ],
-    createdAt: "2023-02-10",
-    subscribers: 412,
-  },
-  {
-    id: "5",
-    title: "Monthly Digest",
-    interval: "monthly",
-    time: "10:00",
-    components: [
-      { type: "weather", params: { city: "Berlin" } },
-      { type: "crypto", params: { currency: "Bitcoin" } },
-    ],
-    createdAt: "2023-01-05",
-    subscribers: 753,
-  },
-];
+import { trpc } from "@/app/_trpc/client";
 
 export default function Page() {
+  const user = useUserStore((state) => state.user);
+
+  const { data: newsletters, refetch } = trpc.newsletter.getByUserId.useQuery(
+    user ? user.id : "",
+    {
+      enabled: !!user,
+    },
+  );
+
+  const { mutate: deleteNewsletter } = trpc.newsletter.delete.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Error deleting newsletter:", error);
+    },
+  });
+
+  console.log("newsletters", newsletters);
   return (
     <MainLayout>
       <div className='px-6'>
@@ -90,9 +47,19 @@ export default function Page() {
           </Link>
         </header>
         <div className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3'>
-          {sampleNewsletters.map((newsletter) => (
-            <NewsletterCard key={newsletter.id} newsletter={newsletter} />
-          ))}
+          {!newsletters || newsletters.length === 0 ? (
+            <div className='bg-muted/30 text-muted-foreground col-span-3 flex h-[200px] items-center justify-center rounded-lg border border-dashed'>
+              <p className='text-sm'>No newsletters found.</p>
+            </div>
+          ) : (
+            newsletters.map((newsletter) => (
+              <NewsletterCard
+                key={newsletter.id}
+                newsletter={newsletter}
+                deleteNewsletter={deleteNewsletter}
+              />
+            ))
+          )}
         </div>
       </div>
     </MainLayout>
