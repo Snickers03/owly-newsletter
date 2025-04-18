@@ -103,7 +103,7 @@ export function NewsletterCreator() {
   };
 
   const { mutate: createNewsletter } = trpc.newsletter.create.useMutation({
-    onSuccess: (newsletter) => {
+    onSuccess: () => {
       router.push("/main/newsletter");
     },
     onError: (error) => {

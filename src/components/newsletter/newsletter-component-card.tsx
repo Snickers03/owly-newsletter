@@ -50,7 +50,7 @@ export function NewsletterComponentCard({
   const [isEditing, setIsEditing] = useState(initialEditMode);
   const [city, setCity] = useState(component.params.city || "");
   const [currency, setCurrency] = useState(component.params.currency || "");
-  const [quote, setQuote] = useState(component.params.quote || "");
+  const [quote] = useState(component.params.quote || "");
 
   useEffect(() => {
     if (initialEditMode) {
@@ -177,7 +177,7 @@ export function NewsletterComponentCard({
                 “Quote”
                 <br />
                 <span className='text-foreground mt-2 block text-right text-sm'>
-                  – "Author"
+                  – &quot;Author&quot;
                 </span>
               </blockquote>
             )}

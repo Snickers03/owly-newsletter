@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { formatDate2, toNormalCase } from "@/lib/utils";
-import { Newsletter } from "@prisma/client";
+import { Component, Newsletter } from "@prisma/client";
 import { Calendar, Clock, Edit, MoreHorizontal, Trash } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface Props {
-  newsletter: Newsletter & { components: any[] };
+  newsletter: Newsletter & { components: Component[] };
   deleteNewsletter: (id: string) => void;
 }
 
