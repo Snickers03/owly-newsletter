@@ -6,6 +6,8 @@ import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/main-layout";
+import { NewsletterComponent } from "@/components/newsletter/create/newsletter-creator";
+import { NewsletterPreview } from "@/components/newsletter/create/newsletter-preview";
 import { trpc } from "@/app/_trpc/client";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -14,7 +16,38 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { data: newsletter } = trpc.newsletter.getById.useQuery(id, {
     enabled: !!id,
   });
+  function transformComponents(components: any[]): NewsletterComponent[] {
+    return components.map((component) => {
+      if (component.type === "crypto" && component.crypto) {
+        return {
+          id: component.id,
+          type: "crypto",
+          isNew: false,
+          params: {
+            currency: component.crypto.currency,
+          },
+        };
+      }
 
+      if (component.type === "weather" && component.weather) {
+        return {
+          id: component.id,
+          type: "weather",
+          isNew: false,
+          params: {
+            city: component.weather.city,
+          },
+        };
+      }
+
+      throw new Error(
+        `Unknown or incomplete component: ${JSON.stringify(component)}`,
+      );
+    });
+  }
+
+  const transformedComponents: NewsletterComponent[] =
+    transformComponents(newsletter?.components ?? []) ?? [];
   if (!newsletter) {
     return (
       <MainLayout>
@@ -36,9 +69,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     <MainLayout>
       <header className='flex items-start justify-between'>
         <div>
-          <h1 className='mb-2 text-3xl font-bold'>Edit Newsletter</h1>
+          <h1 className='mb-2 text-3xl font-bold'>View Newsletter</h1>
           <p className='text-muted-foreground mb-8'>
-            Modify your newsletter settings and content as needed.
+            View your newsletter before sending it out.
           </p>
         </div>
         <Link href='/main/newsletter'>
@@ -48,7 +81,15 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           </Button>
         </Link>
       </header>
-
+      <div className='mb-3 flex items-center justify-end'>
+        <Button>Send Newsletter</Button>
+      </div>
+      <NewsletterPreview
+        title={newsletter.title}
+        interval={newsletter.interval}
+        time={newsletter.time}
+        components={transformedComponents}
+      />
       {/* <NewsletterEditor
         initialData={{
           title: newsletter.title,

@@ -52,9 +52,14 @@ export const newsletterRouter = router({
         components: z.array(
           z.object({
             type: z.enum(["weather", "crypto", "quote"]),
-            weather: z.string().optional(),
-            crypto: z.string().optional(),
-            quote: z.string().optional(),
+            params: z
+              .object({
+                city: z.string().optional(),
+                currency: z.string().optional(),
+                quote: z.string().optional(),
+                author: z.string().optional(),
+              })
+              .optional(),
           }),
         ),
       }),
@@ -75,22 +80,22 @@ export const newsletterRouter = router({
               ...(comp.type === "weather" && {
                 weather: {
                   create: {
-                    city: comp.params.city ?? "",
+                    city: comp.params?.city ?? "",
                   },
                 },
               }),
               ...(comp.type === "crypto" && {
                 crypto: {
                   create: {
-                    currency: comp.params.currency ?? "",
+                    currency: comp.params?.currency ?? "",
                   },
                 },
               }),
               ...(comp.type === "quote" && {
                 quote: {
                   create: {
-                    quote: comp.params.quote ?? "",
-                    author: comp.params.author ?? "Unknown",
+                    quote: comp.params?.quote ?? "",
+                    author: comp.params?.author ?? "Unknown",
                   },
                 },
               }),
