@@ -42,7 +42,7 @@ export function NewsletterCard({ newsletter, deleteNewsletter }: Props) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <Link href={`/main/newsletter/edit?nid=${newsletter.id}`}>
+              <Link href={`/main/newsletter/${newsletter.id}`}>
                 <DropdownMenuItem>
                   <Edit className='mr-2 h-4 w-4' />
                   Edit

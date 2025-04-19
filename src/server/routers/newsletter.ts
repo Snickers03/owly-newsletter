@@ -4,6 +4,26 @@ import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 
 export const newsletterRouter = router({
+  getById: publicProcedure.input(z.string()).query(async (opts) => {
+    const newsletter = await prisma.newsletter.findUnique({
+      where: {
+        id: opts.input,
+      },
+      include: {
+        components: {
+          include: {
+            crypto: true,
+            weather: true,
+            quote: true,
+          },
+        },
+      },
+    });
+    if (!newsletter) {
+      throw new Error("Newsletter not found");
+    }
+    return newsletter;
+  }),
   getByUserId: publicProcedure.input(z.string()).query(async (opts) => {
     const newsletters = await prisma.newsletter.findMany({
       where: {
@@ -32,12 +52,9 @@ export const newsletterRouter = router({
         components: z.array(
           z.object({
             type: z.enum(["weather", "crypto", "quote"]),
-            params: z.object({
-              city: z.string().optional(),
-              currency: z.string().optional(),
-              quote: z.string().optional(),
-              author: z.string().optional(),
-            }),
+            weather: z.string().optional(),
+            crypto: z.string().optional(),
+            quote: z.string().optional(),
           }),
         ),
       }),

@@ -1,5 +1,4 @@
 import MainLayout from "@/components/layout/main-layout";
-import { NewsletterCreator } from "@/components/newsletter/create/newsletter-creator";
 
 export default function Page() {
   return (
@@ -10,7 +9,7 @@ export default function Page() {
           Configure your personalized newsletter with your preferred content and
           settings.
         </p>
-        <NewsletterCreator />
+        {/* <NewsletterCreator /> */}
       </header>
     </MainLayout>
   );
