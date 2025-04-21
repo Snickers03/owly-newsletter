@@ -184,4 +184,32 @@ export const newsletterRouter = router({
         }),
       });
     }),
+  toggleActive: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        active: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { id, active } = input;
+
+      return await prisma.newsletter.update({
+        where: {
+          id: id,
+        },
+        data: {
+          active: active,
+        },
+        include: {
+          components: {
+            include: {
+              crypto: true,
+              weather: true,
+              quote: true,
+            },
+          },
+        },
+      });
+    }),
 });

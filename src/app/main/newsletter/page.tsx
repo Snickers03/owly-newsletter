@@ -28,6 +28,15 @@ export default function Page() {
     },
   });
 
+  const { mutate: toggleActive } = trpc.newsletter.toggleActive.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Error toggling newsletter:", error);
+    },
+  });
+
   return (
     <MainLayout>
       <header className='mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center'>
@@ -55,6 +64,9 @@ export default function Page() {
               key={newsletter.id}
               newsletter={newsletter}
               deleteNewsletter={deleteNewsletter}
+              toggleActive={(id, currentStatus) =>
+                toggleActive({ id, active: !currentStatus })
+              }
             />
           ))
         )}

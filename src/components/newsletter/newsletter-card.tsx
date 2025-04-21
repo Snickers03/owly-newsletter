@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { formatDate2, toNormalCase } from "@/lib/utils";
-import { Component, Newsletter } from "@prisma/client";
+import type { Component, Newsletter } from "@prisma/client";
 import {
   Calendar,
   Clock,
@@ -31,9 +31,14 @@ import {
 interface Props {
   newsletter: Newsletter & { components: Component[] };
   deleteNewsletter: (id: string) => void;
+  toggleActive: (id: string, currentStatus: boolean) => void;
 }
 
-export function NewsletterCard({ newsletter, deleteNewsletter }: Props) {
+export function NewsletterCard({
+  newsletter,
+  deleteNewsletter,
+  toggleActive,
+}: Props) {
   return (
     <Card className='overflow-hidden pb-0 transition-shadow hover:shadow-md'>
       <CardHeader className='pb-2'>
@@ -54,6 +59,21 @@ export function NewsletterCard({ newsletter, deleteNewsletter }: Props) {
                   View
                 </DropdownMenuItem>
               </Link>
+              <DropdownMenuItem
+                onClick={() => toggleActive(newsletter.id, newsletter.active)}
+              >
+                {newsletter.active ? (
+                  <>
+                    <Clock className='mr-2 h-4 w-4' />
+                    Deactivate
+                  </>
+                ) : (
+                  <>
+                    <Clock className='mr-2 h-4 w-4' />
+                    Activate
+                  </>
+                )}
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className='text-destructive'
@@ -77,6 +97,18 @@ export function NewsletterCard({ newsletter, deleteNewsletter }: Props) {
 
         <div className='space-y-2'>
           <div className='flex flex-wrap gap-2'>
+            {newsletter.active ? (
+              <Badge className='bg-green-100 text-green-800 hover:bg-green-200'>
+                Active
+              </Badge>
+            ) : (
+              <Badge
+                variant='secondary'
+                className='bg-amber-100 text-amber-800 hover:bg-amber-200'
+              >
+                Inactive
+              </Badge>
+            )}
             {newsletter.components.length > 0 && (
               <Badge variant='secondary'>
                 {newsletter.components.length}{" "}
