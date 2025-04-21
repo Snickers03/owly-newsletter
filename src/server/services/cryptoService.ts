@@ -34,6 +34,14 @@ export const fetchCryptoData = async (
   );
 
   const resJson = await res.json();
+  if (res.status !== 200) {
+    throw new Error(
+      `Error fetching crypto data: ${resJson.status.error_message}`,
+    );
+  }
+  if (!resJson.data) {
+    throw new Error("No data found in the response");
+  }
 
   return Object.values(resJson.data).map((currency) => {
     const c = currency as RawCurrency;
