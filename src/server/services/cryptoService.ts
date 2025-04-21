@@ -43,8 +43,6 @@ export const fetchCryptoData = async (
     throw new Error("No data found in the response");
   }
 
-  console.log(resJson);
-
   return Object.values(resJson.data).map((currency) => {
     const c = currency as RawCurrency;
     return {

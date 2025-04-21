@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma";
+import { resend } from "@/lib/resend";
 import { z } from "zod";
 
+import NewsletterTemplateEmail from "../../../emails/newsletter-template-email";
 import { fetchCryptoData } from "../services/cryptoService";
+import { fetchWeatherData } from "../services/weatherService";
 import { publicProcedure, router } from "../trpc";
 
 export const newsletterRouter = router({
@@ -138,19 +141,19 @@ export const newsletterRouter = router({
       if (!input.userEmail) {
         throw new Error("User email is required");
       }
-      // const weatherComponentCity = safeComponents
-      //   .filter((component) => component.type === "weather")
-      //   .map((component) => component.params?.city);
-      // const city = weatherComponentCity[0] ?? null;
-      // let weatherInfo = null;
-      // if (city) {
-      //   const weather = await fetchWeatherData(city ?? "");
-      //   weatherInfo = {
-      //     city: city ?? "",
-      //     temperature: weather.temperature,
-      //     condition: weather.condition,
-      //   };
-      // }
+      const weatherComponentCity = input.components
+        .filter((component) => component.type === "weather")
+        .map((component) => component.params?.city);
+      const city = weatherComponentCity[0] ?? null;
+      let weatherInfo = null;
+      if (city) {
+        const weather = await fetchWeatherData(city ?? "");
+        weatherInfo = {
+          city: city ?? "",
+          temperature: weather.temperature,
+          condition: weather.condition,
+        };
+      }
 
       const cryptoComponentsCurrencies = input.components
         .filter((component) => component.type === "crypto")
@@ -166,19 +169,19 @@ export const newsletterRouter = router({
       if (cryptoComponentsCurrencies.length > 0) {
         cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
       }
-      console.log("cryptoInfo", cryptoInfo);
-      return;
-      // return await resend.emails.send({
-      //   from: "Niklas <clubverse@niklas.sh>",
-      //   to: input.userEmail,
-      //   subject: input.title,
-      //   react: NewsletterTemplateEmail({
-      //     title: input.title,
-      //     time: input.time,
-      //     interval: input.interval,
-      //     cryptoInfo: cryptoInfo,
-      //   }),
-      // });
+
+      return await resend.emails.send({
+        from: "Niklas <clubverse@niklas.sh>",
+        to: input.userEmail,
+        subject: input.title,
+        react: NewsletterTemplateEmail({
+          title: input.title,
+          time: input.time,
+          interval: input.interval,
+          cryptoInfo: cryptoInfo,
+          weatherInfo: weatherInfo,
+        }),
+      });
     }),
   toggleActive: publicProcedure
     .input(
