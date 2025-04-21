@@ -140,7 +140,12 @@ export const newsletterRouter = router({
         throw new Error("User email is required");
       }
 
-      const weatherComponentCity = input.components
+      const safeComponents = input.components.map((component) => ({
+        ...component,
+        params: component.params ?? {}, // immer ein Objekt
+      }));
+
+      const weatherComponentCity = safeComponents
         .filter((component) => component.type === "weather")
         .map((component) => component.params?.city);
       const city = weatherComponentCity[0] ?? null;
@@ -154,7 +159,7 @@ export const newsletterRouter = router({
         };
       }
 
-      const cryptoComponentsCurrencies = input.components
+      const cryptoComponentsCurrencies = safeComponents
         .filter((component) => component.type === "crypto")
         .map((component) => {
           const currency = component.params?.currency;
