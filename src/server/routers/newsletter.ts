@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { resend } from "@/lib/resend";
 import { z } from "zod";
 
-import NewsletterTemplateEmail from "../../../emails/newsletter-template-email";
 import { fetchCryptoData } from "../services/cryptoService";
 import { publicProcedure, router } from "../trpc";
 
@@ -168,18 +166,19 @@ export const newsletterRouter = router({
       if (cryptoComponentsCurrencies.length > 0) {
         cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
       }
-
-      return await resend.emails.send({
-        from: "Niklas <clubverse@niklas.sh>",
-        to: input.userEmail,
-        subject: input.title,
-        react: NewsletterTemplateEmail({
-          title: input.title,
-          time: input.time,
-          interval: input.interval,
-          cryptoInfo: cryptoInfo,
-        }),
-      });
+      console.log("cryptoInfo", cryptoInfo);
+      return;
+      // return await resend.emails.send({
+      //   from: "Niklas <clubverse@niklas.sh>",
+      //   to: input.userEmail,
+      //   subject: input.title,
+      //   react: NewsletterTemplateEmail({
+      //     title: input.title,
+      //     time: input.time,
+      //     interval: input.interval,
+      //     cryptoInfo: cryptoInfo,
+      //   }),
+      // });
     }),
   toggleActive: publicProcedure
     .input(
