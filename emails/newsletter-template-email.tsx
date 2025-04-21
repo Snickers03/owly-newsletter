@@ -1,3 +1,4 @@
+import { numberToTemperature } from "@/lib/utils";
 import {
   Body,
   Column,
@@ -22,7 +23,8 @@ interface CryptoInfo {
 
 interface WeatherInfo {
   city: string;
-  temperature: string;
+  temperature: number;
+  condition: string;
 }
 
 interface NewsletterTemplateEmailProps {
@@ -38,7 +40,8 @@ export default function NewsletterTemplateEmail({
   title = "Crypto & Weather Newsletter",
   weatherInfo = {
     city: "New York",
-    temperature: "22°C",
+    temperature: 22,
+    condition: "Sunny",
   },
   cryptoInfo = [
     {
@@ -99,7 +102,10 @@ export default function NewsletterTemplateEmail({
                   </Column>
                   <Column>
                     <Text style={cardSubtitle}>{weatherInfo.city}</Text>
-                    <Text style={cardText}>{weatherInfo.temperature}</Text>
+                    <Text style={cardText}>
+                      {numberToTemperature(weatherInfo.temperature)} |{" "}
+                      {weatherInfo.condition}
+                    </Text>
                   </Column>
                 </Row>
               </Section>

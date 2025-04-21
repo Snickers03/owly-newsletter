@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import NewsletterTemplateEmail from "../../../emails/newsletter-template-email";
 import { fetchCryptoData } from "../services/cryptoService";
+import { fetchWeatherData } from "../services/weatherService";
 import { publicProcedure, router } from "../trpc";
 
 export const newsletterRouter = router({
@@ -145,7 +146,12 @@ export const newsletterRouter = router({
         .filter((component) => component.type === "weather")
         .map((component) => component.params?.city);
       const city = weatherComponentCity[0];
-      return;
+      const weather = await fetchWeatherData(city ?? "");
+      const weatherInfo = {
+        city: city ?? "",
+        temperature: weather.temperature,
+        condition: weather.condition,
+      };
 
       const cryptoComponentsCurrencies = input.components
         .filter((component) => component.type === "crypto")
@@ -168,6 +174,7 @@ export const newsletterRouter = router({
           title: input.title,
           time: input.time,
           interval: input.interval,
+          weatherInfo,
           cryptoInfo,
         }),
       });
