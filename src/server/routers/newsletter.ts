@@ -179,8 +179,8 @@ export const newsletterRouter = router({
           title: input.title,
           time: input.time,
           interval: input.interval,
-          weatherInfo: weatherInfo,
-          cryptoInfo: cryptoInfo,
+          ...(weatherInfo ? { weatherInfo } : {}),
+          ...(cryptoInfo ? { cryptoInfo } : {}),
         }),
       });
     }),
