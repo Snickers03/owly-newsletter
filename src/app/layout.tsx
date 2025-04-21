@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { APP_DESCRIPTION, APP_NAME } from "@/config";
+import { Toaster } from "sonner";
 
 import AuthProvider from "@/components/providers/auth-provider";
 
@@ -34,7 +35,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <TrpcProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            <Toaster position='top-center' />
+          </AuthProvider>
         </TrpcProvider>
       </body>
     </html>

@@ -17,6 +17,7 @@ interface CryptoInfo {
   name: string;
   symbol: string;
   price: number;
+  percent_change_24h: number;
 }
 
 interface WeatherInfo {
@@ -44,6 +45,7 @@ export default function NewsletterTemplateEmail({
       name: "Bitcoin",
       symbol: "BTC",
       price: 45000,
+      percent_change_24h: 2.5,
     },
   ],
   interval = "Daily",
@@ -122,7 +124,11 @@ export default function NewsletterTemplateEmail({
                         {crypto.name} ({crypto.symbol})
                       </Text>
                       <Text style={cardText}>
-                        Price: {crypto.price.toLocaleString()} €
+                        Price: {crypto.price.toLocaleString()} € | Change (24h):{" "}
+                        {crypto.percent_change_24h > 0
+                          ? `+${crypto.percent_change_24h.toFixed(2)}`
+                          : crypto.percent_change_24h.toFixed(2)}
+                        %
                       </Text>
                     </Column>
                   </Row>
@@ -219,12 +225,10 @@ const iconContainer = {
   borderRadius: "50%",
   width: "32px",
   height: "32px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
   fontSize: "16px",
-  margin: "0",
+  lineHeight: "32px",
   textAlign: "center" as const,
+  display: "inline-block",
 };
 
 const divider = {

@@ -3,6 +3,7 @@ import { resend } from "@/lib/resend";
 import { z } from "zod";
 
 import NewsletterTemplateEmail from "../../../emails/newsletter-template-email";
+import { fetchCryptoData } from "../services/cryptoService";
 import { publicProcedure, router } from "../trpc";
 
 export const newsletterRouter = router({
@@ -140,31 +141,25 @@ export const newsletterRouter = router({
         throw new Error("User email is required");
       }
 
-      // extract components
-      const weatherExists =
-        input.components.find((component) => component.type === "weather")
-          ?.params ?? null;
+      const weatherComponentCity = input.components
+        .filter((component) => component.type === "weather")
+        .map((component) => component.params?.city);
+      const city = weatherComponentCity[0];
+      return;
 
-      const weatherInfo = weatherExists
-        ? {
-            city: weatherExists.city ?? "-",
-            temperature: "22°C", // Placeholder for temperature
-          }
-        : null;
+      const cryptoComponentsCurrencies = input.components
+        .filter((component) => component.type === "crypto")
+        .map((component) => {
+          const currency = component.params?.currency;
+          // TODO: safe symbol instead of name in db
+          if (currency?.toLowerCase() === "bitcoin") return "BTC";
+          if (currency?.toLowerCase() === "ethereum") return "ETH";
+          return currency;
+        })
+        .filter((currency): currency is string => !!currency);
 
-      // fetch data for components
-      const cryptoExists = input.components.find(
-        (component) => component.type === "crypto",
-      )?.params;
-      let bitcoinPrice = null;
+      const cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
 
-      if (cryptoExists) {
-        const res = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${cryptoExists.currency}&vs_currencies=eur`,
-        );
-        const data = await res.json();
-        bitcoinPrice = data.bitcoin.eur;
-      }
       return await resend.emails.send({
         from: "Niklas <clubverse@niklas.sh>",
         to: input.userEmail,
@@ -173,14 +168,7 @@ export const newsletterRouter = router({
           title: input.title,
           time: input.time,
           interval: input.interval,
-          weatherInfo: weatherInfo,
-          cryptoInfo: [
-            {
-              name: cryptoExists?.currency ?? "CURRENCY",
-              symbol: "SYMBOL",
-              price: bitcoinPrice,
-            },
-          ],
+          cryptoInfo,
         }),
       });
     }),

@@ -10,6 +10,7 @@ import {
   WeatherParams,
 } from "@prisma/client";
 import { ArrowLeft, Send } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/main-layout";
@@ -28,10 +29,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { mutate: sendNewsletter } = trpc.newsletter.sendNewsletter.useMutation(
     {
       onSuccess: () => {
-        alert("Newsletter sent successfully!");
+        toast.success("Newsletter sent successfully!");
       },
       onError: (error) => {
-        alert(`Error sending newsletter: ${error.message}`);
+        console.error("Error sending newsletter: ", error);
       },
     },
   );
@@ -82,7 +83,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   function transformComponents(
     components: ExtendedComponent[],
   ): NewsletterComponent[] {
-    console.log("components", components);
     return components.map((component) => {
       if (component.type === "crypto" && component?.crypto) {
         return {
