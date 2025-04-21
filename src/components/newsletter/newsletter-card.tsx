@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { formatDate2, toNormalCase } from "@/lib/utils";
 import { Component, Newsletter } from "@prisma/client";
-import { Calendar, Clock, Edit, MoreHorizontal, Trash } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MoreHorizontal,
+  Newspaper,
+  Trash,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,8 +50,8 @@ export function NewsletterCard({ newsletter, deleteNewsletter }: Props) {
             <DropdownMenuContent align='end'>
               <Link href={`/main/newsletter/${newsletter.id}`}>
                 <DropdownMenuItem>
-                  <Edit className='mr-2 h-4 w-4' />
-                  Edit
+                  <Newspaper className='mr-2 h-4 w-4' />
+                  View
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />

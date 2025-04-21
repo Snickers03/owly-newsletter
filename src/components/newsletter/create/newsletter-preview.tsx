@@ -49,8 +49,6 @@ export function NewsletterPreview({
     },
   ];
 
-  console.log("Components:", components);
-
   return (
     <Card className='w-full gap-3 border py-0 shadow-sm'>
       <CardHeader className='rounded-t-lg border-b bg-gray-50 px-4 py-3'>

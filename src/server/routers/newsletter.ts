@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
+import { resend } from "@/lib/resend";
 import { z } from "zod";
 
+import NewsletterTemplateEmail from "../../../emails/newsletter-template-email";
 import { publicProcedure, router } from "../trpc";
 
 export const newsletterRouter = router({
@@ -111,4 +113,75 @@ export const newsletterRouter = router({
       },
     });
   }),
+  sendNewsletter: publicProcedure
+    .input(
+      z.object({
+        userEmail: z.string().nullable(),
+        title: z.string(),
+        interval: z.string(),
+        time: z.string(),
+        components: z.array(
+          z.object({
+            type: z.string(),
+            params: z
+              .object({
+                city: z.string().optional(),
+                currency: z.string().optional(),
+                quote: z.string().optional(),
+                author: z.string().optional(),
+              })
+              .optional(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      if (!input.userEmail) {
+        throw new Error("User email is required");
+      }
+
+      // extract components
+      const weatherExists =
+        input.components.find((component) => component.type === "weather")
+          ?.params ?? null;
+
+      const weatherInfo = weatherExists
+        ? {
+            city: weatherExists.city ?? "-",
+            temperature: "22°C", // Placeholder for temperature
+          }
+        : null;
+
+      // fetch data for components
+      const cryptoExists = input.components.find(
+        (component) => component.type === "crypto",
+      )?.params;
+      let bitcoinPrice = null;
+
+      if (cryptoExists) {
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${cryptoExists.currency}&vs_currencies=eur`,
+        );
+        const data = await res.json();
+        bitcoinPrice = data.bitcoin.eur;
+      }
+      return await resend.emails.send({
+        from: "Niklas <clubverse@niklas.sh>",
+        to: input.userEmail,
+        subject: input.title,
+        react: NewsletterTemplateEmail({
+          title: input.title,
+          time: input.time,
+          interval: input.interval,
+          weatherInfo: weatherInfo,
+          cryptoInfo: [
+            {
+              name: cryptoExists?.currency ?? "CURRENCY",
+              symbol: "SYMBOL",
+              price: bitcoinPrice,
+            },
+          ],
+        }),
+      });
+    }),
 });

@@ -2,7 +2,8 @@
 
 import { use } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { useUserStore } from "@/store/user-store";
+import { ArrowLeft, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/main-layout";
@@ -12,10 +13,60 @@ import { trpc } from "@/app/_trpc/client";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const user = useUserStore((state) => state.user);
 
   const { data: newsletter } = trpc.newsletter.getById.useQuery(id, {
     enabled: !!id,
   });
+
+  const { mutate: sendNewsletter } = trpc.newsletter.sendNewsletter.useMutation(
+    {
+      onSuccess: () => {
+        alert("Newsletter sent successfully!");
+      },
+      onError: (error) => {
+        alert(`Error sending newsletter: ${error.message}`);
+      },
+    },
+  );
+
+  function handleSendNewsletter() {
+    // extract components params
+    const componentsParams = newsletter?.components.map((component) => {
+      if (component.type === "crypto" && component.crypto) {
+        return {
+          type: "crypto",
+          params: {
+            currency: component.crypto.currency,
+          },
+        };
+      }
+
+      if (component.type === "weather" && component.weather) {
+        return {
+          type: "weather",
+          params: {
+            city: component.weather.city,
+          },
+        };
+      }
+
+      throw new Error(
+        `Unknown or incomplete component: ${JSON.stringify(component)}`,
+      );
+    });
+
+    if (newsletter) {
+      sendNewsletter({
+        userEmail: user?.email ?? null,
+        title: newsletter.title,
+        interval: newsletter.interval,
+        time: newsletter.time,
+        components: componentsParams ?? [],
+      });
+    }
+  }
+
   function transformComponents(components: any[]): NewsletterComponent[] {
     return components.map((component) => {
       if (component.type === "crypto" && component.crypto) {
@@ -81,8 +132,14 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           </Button>
         </Link>
       </header>
-      <div className='mb-3 flex items-center justify-end'>
-        <Button>Send Newsletter</Button>
+      <div
+        onClick={handleSendNewsletter}
+        className='mb-3 flex items-center justify-end'
+      >
+        <Button>
+          Send Newsletter
+          <Send className='h-4 w-4' />
+        </Button>
       </div>
       <NewsletterPreview
         title={newsletter.title}
@@ -90,16 +147,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         time={newsletter.time}
         components={transformedComponents}
       />
-      {/* <NewsletterEditor
-        initialData={{
-          title: newsletter.title,
-          interval: newsletter.interval,
-          time: newsletter.time,
-          components: newsletter.components,
-        }}
-        onSave={() => {}}
-        mode='edit'
-      /> */}
     </MainLayout>
   );
 }
