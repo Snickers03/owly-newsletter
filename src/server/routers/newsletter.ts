@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
-import { fetchCryptoData } from "../services/cryptoService";
-import { fetchWeatherData } from "../services/weatherService";
 import { publicProcedure, router } from "../trpc";
 
 export const newsletterRouter = router({
@@ -140,44 +138,38 @@ export const newsletterRouter = router({
         throw new Error("User email is required");
       }
 
-      const safeComponents = input.components.map((component) => ({
-        ...component,
-        params: component.params ?? {}, // immer ein Objekt
-      }));
+      console.log("Sending newsletter to", input.userEmail);
+      console.log("Newsletter components: ", input.components);
+      return null;
+      // const weatherComponentCity = safeComponents
+      //   .filter((component) => component.type === "weather")
+      //   .map((component) => component.params?.city);
+      // const city = weatherComponentCity[0] ?? null;
+      // let weatherInfo = null;
+      // if (city) {
+      //   const weather = await fetchWeatherData(city ?? "");
+      //   weatherInfo = {
+      //     city: city ?? "",
+      //     temperature: weather.temperature,
+      //     condition: weather.condition,
+      //   };
+      // }
 
-      const weatherComponentCity = safeComponents
-        .filter((component) => component.type === "weather")
-        .map((component) => component.params?.city);
-      const city = weatherComponentCity[0] ?? null;
-      let weatherInfo = null;
-      if (city) {
-        const weather = await fetchWeatherData(city ?? "");
-        weatherInfo = {
-          city: city ?? "",
-          temperature: weather.temperature,
-          condition: weather.condition,
-        };
-      }
+      // const cryptoComponentsCurrencies = safeComponents
+      //   .filter((component) => component.type === "crypto")
+      //   .map((component) => {
+      //     const currency = component.params?.currency;
+      //     // TODO: safe symbol instead of name in db
+      //     if (currency?.toLowerCase() === "bitcoin") return "BTC";
+      //     if (currency?.toLowerCase() === "ethereum") return "ETH";
+      //     return currency;
+      //   })
+      //   .filter((currency): currency is string => !!currency);
+      // let cryptoInfo = null;
+      // if (cryptoComponentsCurrencies.length > 0) {
+      //   cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
+      // }
 
-      const cryptoComponentsCurrencies = safeComponents
-        .filter((component) => component.type === "crypto")
-        .map((component) => {
-          const currency = component.params?.currency;
-          // TODO: safe symbol instead of name in db
-          if (currency?.toLowerCase() === "bitcoin") return "BTC";
-          if (currency?.toLowerCase() === "ethereum") return "ETH";
-          return currency;
-        })
-        .filter((currency): currency is string => !!currency);
-      let cryptoInfo = null;
-      if (cryptoComponentsCurrencies.length > 0) {
-        cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
-      }
-
-      console.log("Crypto Info", cryptoInfo);
-      console.log("Weather Info", weatherInfo);
-
-      return;
       // return await resend.emails.send({
       //   from: "Niklas <clubverse@niklas.sh>",
       //   to: input.userEmail,
