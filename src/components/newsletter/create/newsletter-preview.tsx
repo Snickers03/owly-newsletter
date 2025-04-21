@@ -145,13 +145,14 @@ export function NewsletterPreview({
                         </p>
                         <div className='flex items-center text-xs'>
                           <p className='text-muted-foreground'>
-                            Price: $
+                            Price:
                             {
                               cryptoInfo.find(
                                 (crypto) =>
                                   crypto.name === component.params.currency,
                               )?.price
                             }
+                            €
                           </p>
                           <span className='text-muted-foreground mx-1'>|</span>
                           <p className='text-muted-foreground'>

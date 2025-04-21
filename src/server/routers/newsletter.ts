@@ -145,13 +145,16 @@ export const newsletterRouter = router({
       const weatherComponentCity = input.components
         .filter((component) => component.type === "weather")
         .map((component) => component.params?.city);
-      const city = weatherComponentCity[0];
-      const weather = await fetchWeatherData(city ?? "");
-      const weatherInfo = {
-        city: city ?? "",
-        temperature: weather.temperature,
-        condition: weather.condition,
-      };
+      const city = weatherComponentCity[0] ?? null;
+      let weatherInfo = null;
+      if (city) {
+        const weather = await fetchWeatherData(city ?? "");
+        weatherInfo = {
+          city: city ?? "",
+          temperature: weather.temperature,
+          condition: weather.condition,
+        };
+      }
 
       const cryptoComponentsCurrencies = input.components
         .filter((component) => component.type === "crypto")
@@ -163,8 +166,10 @@ export const newsletterRouter = router({
           return currency;
         })
         .filter((currency): currency is string => !!currency);
-
-      const cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
+      let cryptoInfo = null;
+      if (cryptoComponentsCurrencies.length > 0) {
+        cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
+      }
 
       return await resend.emails.send({
         from: "Niklas <clubverse@niklas.sh>",
@@ -174,8 +179,8 @@ export const newsletterRouter = router({
           title: input.title,
           time: input.time,
           interval: input.interval,
-          weatherInfo,
-          cryptoInfo,
+          weatherInfo: weatherInfo,
+          cryptoInfo: cryptoInfo,
         }),
       });
     }),

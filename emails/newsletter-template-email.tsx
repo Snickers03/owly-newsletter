@@ -30,7 +30,7 @@ interface WeatherInfo {
 interface NewsletterTemplateEmailProps {
   title?: string;
   weatherInfo?: WeatherInfo | null;
-  cryptoInfo?: CryptoInfo[];
+  cryptoInfo?: CryptoInfo[] | null;
   interval?: string;
   time?: string;
   unsubscribeUrl?: string;
@@ -103,7 +103,7 @@ export default function NewsletterTemplateEmail({
                   <Column>
                     <Text style={cardSubtitle}>{weatherInfo.city}</Text>
                     <Text style={cardText}>
-                      {numberToTemperature(weatherInfo.temperature)} |{" "}
+                      {numberToTemperature(weatherInfo.temperature)} ,{" "}
                       {weatherInfo.condition}
                     </Text>
                   </Column>
