@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
+import { resend } from "@/lib/resend";
 import { z } from "zod";
 
+import NewsletterTemplateEmail from "../../../emails/newsletter-template-email";
+import { fetchCryptoData } from "../services/cryptoService";
 import { publicProcedure, router } from "../trpc";
 
 export const newsletterRouter = router({
@@ -137,10 +140,6 @@ export const newsletterRouter = router({
       if (!input.userEmail) {
         throw new Error("User email is required");
       }
-
-      console.log("Sending newsletter to", input.userEmail);
-      console.log("Newsletter components: ", input.components);
-      return null;
       // const weatherComponentCity = safeComponents
       //   .filter((component) => component.type === "weather")
       //   .map((component) => component.params?.city);
@@ -155,33 +154,32 @@ export const newsletterRouter = router({
       //   };
       // }
 
-      // const cryptoComponentsCurrencies = safeComponents
-      //   .filter((component) => component.type === "crypto")
-      //   .map((component) => {
-      //     const currency = component.params?.currency;
-      //     // TODO: safe symbol instead of name in db
-      //     if (currency?.toLowerCase() === "bitcoin") return "BTC";
-      //     if (currency?.toLowerCase() === "ethereum") return "ETH";
-      //     return currency;
-      //   })
-      //   .filter((currency): currency is string => !!currency);
-      // let cryptoInfo = null;
-      // if (cryptoComponentsCurrencies.length > 0) {
-      //   cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
-      // }
+      const cryptoComponentsCurrencies = input.components
+        .filter((component) => component.type === "crypto")
+        .map((component) => {
+          const currency = component.params?.currency;
+          // TODO: safe symbol instead of name in db
+          if (currency?.toLowerCase() === "bitcoin") return "BTC";
+          if (currency?.toLowerCase() === "ethereum") return "ETH";
+          return currency;
+        })
+        .filter((currency): currency is string => !!currency);
+      let cryptoInfo = null;
+      if (cryptoComponentsCurrencies.length > 0) {
+        cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
+      }
 
-      // return await resend.emails.send({
-      //   from: "Niklas <clubverse@niklas.sh>",
-      //   to: input.userEmail,
-      //   subject: input.title,
-      //   react: NewsletterTemplateEmail({
-      //     title: input.title,
-      //     time: input.time,
-      //     interval: input.interval,
-      //     ...(weatherInfo ? { weatherInfo } : {}),
-      //     ...(cryptoInfo ? { cryptoInfo } : {}),
-      //   }),
-      // });
+      return await resend.emails.send({
+        from: "Niklas <clubverse@niklas.sh>",
+        to: input.userEmail,
+        subject: input.title,
+        react: NewsletterTemplateEmail({
+          title: input.title,
+          time: input.time,
+          interval: input.interval,
+          cryptoInfo: cryptoInfo,
+        }),
+      });
     }),
   toggleActive: publicProcedure
     .input(
