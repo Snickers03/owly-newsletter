@@ -3,6 +3,12 @@
 import { use } from "react";
 import Link from "next/link";
 import { useUserStore } from "@/store/user-store";
+import {
+  Component,
+  CryptoParams,
+  QuoteParams,
+  WeatherParams,
+} from "@prisma/client";
 import { ArrowLeft, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -67,9 +73,18 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     }
   }
 
-  function transformComponents(components: any[]): NewsletterComponent[] {
+  interface ExtendedComponent extends Component {
+    crypto?: CryptoParams | null;
+    weather?: WeatherParams | null;
+    quote?: QuoteParams | null;
+  }
+
+  function transformComponents(
+    components: ExtendedComponent[],
+  ): NewsletterComponent[] {
+    console.log("components", components);
     return components.map((component) => {
-      if (component.type === "crypto" && component.crypto) {
+      if (component.type === "crypto" && component?.crypto) {
         return {
           id: component.id,
           type: "crypto",
