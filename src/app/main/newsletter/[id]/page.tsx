@@ -66,6 +66,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     if (newsletter) {
       sendNewsletter({
         userEmail: user?.email ?? null,
+        token: newsletter.token,
         title: newsletter.title,
         interval: newsletter.interval,
         time: newsletter.time,
@@ -114,6 +115,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
   const transformedComponents: NewsletterComponent[] =
     transformComponents(newsletter?.components ?? []) ?? [];
+
   if (!newsletter) {
     return (
       <MainLayout>
@@ -158,6 +160,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       </div>
       <NewsletterPreview
         title={newsletter.title}
+        token={newsletter.token}
         interval={newsletter.interval}
         time={newsletter.time}
         components={transformedComponents}

@@ -119,6 +119,7 @@ export const newsletterRouter = router({
     .input(
       z.object({
         userEmail: z.string().nullable(),
+        token: z.string(),
         title: z.string(),
         interval: z.string(),
         time: z.string(),
@@ -180,6 +181,7 @@ export const newsletterRouter = router({
           interval: input.interval,
           cryptoInfo: cryptoInfo,
           weatherInfo: weatherInfo,
+          token: input.token,
         }),
       });
     }),
@@ -211,4 +213,43 @@ export const newsletterRouter = router({
         },
       });
     }),
+  unsubscribe: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+        reason: z.string().optional(),
+        feedback: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { token, reason, feedback } = input;
+      const updatedNewsletter = await prisma.newsletter.update({
+        where: {
+          token: token,
+        },
+        data: {
+          active: false,
+        },
+      });
+      await prisma.unsubscribe.create({
+        data: {
+          newsletterId: updatedNewsletter.id,
+          userId: updatedNewsletter.userId,
+          reason: reason ?? "",
+          feedback: feedback ?? "",
+        },
+      });
+      return null;
+    }),
+  validateToken: publicProcedure.input(z.string()).query(async (opts) => {
+    const newsletter = await prisma.newsletter.findUnique({
+      where: {
+        token: opts.input,
+      },
+    });
+    if (!newsletter || !newsletter.active) {
+      throw new Error("Invalid token");
+    }
+    return newsletter;
+  }),
 });

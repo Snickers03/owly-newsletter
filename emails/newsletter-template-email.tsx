@@ -33,7 +33,7 @@ interface NewsletterTemplateEmailProps {
   cryptoInfo?: CryptoInfo[] | null;
   interval?: string;
   time?: string;
-  unsubscribeUrl?: string;
+  token?: string;
 }
 
 export default function NewsletterTemplateEmail({
@@ -53,8 +53,10 @@ export default function NewsletterTemplateEmail({
   ],
   interval = "Daily",
   time = "9:00 AM",
-  unsubscribeUrl = "https://example.com/unsubscribe",
+  token = "123456",
 }: NewsletterTemplateEmailProps) {
+  const unsubscribeUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/unsubscribe?token=${token}`;
+
   return (
     <Html>
       <Head />

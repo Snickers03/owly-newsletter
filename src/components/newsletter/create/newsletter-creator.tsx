@@ -255,6 +255,7 @@ export function NewsletterCreator() {
         <div className='sticky top-4'>
           <NewsletterPreview
             title={title || "My Newsletter"}
+            token={"123456"}
             components={components}
             interval={interval}
             time={time}
