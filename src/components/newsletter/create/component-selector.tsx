@@ -1,7 +1,7 @@
 "use client";
 
 import { IComponentType } from "@/types";
-import { Cloud, CreditCard, Quote, X } from "lucide-react";
+import { Cloud, CreditCard, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,12 +24,12 @@ const componentOptions = [
     icon: <CreditCard className='h-6 w-6 text-green-500' />,
     bgColor: "bg-green-100",
   },
-  {
-    type: "quote" as const,
-    title: "Quote",
-    icon: <Quote className='h-6 w-6 text-yellow-500' />,
-    bgColor: "bg-yellow-100",
-  },
+  // {
+  //   type: "quote" as const,
+  //   title: "Quote",
+  //   icon: <Quote className='h-6 w-6 text-yellow-500' />,
+  //   bgColor: "bg-yellow-100",
+  // },
 ];
 
 export function ComponentSelector({
@@ -47,7 +47,7 @@ export function ComponentSelector({
         </div>
       </CardHeader>
       <CardContent>
-        <div className='grid grid-cols-3 gap-4'>
+        <div className='grid grid-cols-2 gap-4'>
           {componentOptions.map((option) => (
             <div
               key={option.type}
