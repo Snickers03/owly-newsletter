@@ -8,8 +8,10 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "push": "prisma db push",
-    "generate": "prisma generate",
+    "push": "dotenv -e .env.local -- prisma db push",
+    "generate": "dotenv -e .env.local -- prisma db generate",
+    "push:prod": "prisma db push",
+    "generate:prod": "prisma generate",
     "db:clear": "ts-node ./prisma/scripts/clear.mjs"
   },
   "dependencies": {
