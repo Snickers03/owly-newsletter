@@ -320,7 +320,7 @@ export function NewsletterComponentCard({
               <div className='space-y-4'>
                 <div className='rounded-lg border p-4'>
                   <blockquote className='text-muted-foreground italic'>
-                    "{currentQuote.quote}"
+                    &quot;{currentQuote.quote}&quot;
                     <br />
                     <span className='text-foreground mt-2 block text-right text-sm'>
                       – {currentQuote.author}
@@ -360,7 +360,7 @@ export function NewsletterComponentCard({
             )}
             {component.type === "quote" && (
               <blockquote className='text-muted-foreground italic'>
-                "{component.params.quote || currentQuote.quote}"
+                &quot;{component.params.quote || currentQuote.quote}&quot;
                 <br />
                 <span className='text-foreground mt-2 block text-right text-sm'>
                   – {component.params.author || currentQuote.author}

@@ -91,13 +91,13 @@ export function NewsletterPreview({
     }
 
     if (type === "quote") {
-      let { quote, author } = params;
+      const { quote, author } = params;
       if (!quote) return null;
 
       return (
         <div key={id} className='rounded-lg border p-3'>
           <blockquote className='text-muted-foreground italic'>
-            "{quote}"
+            &quot;{quote}&quot;
             <br />
             <span className='text-foreground mt-2 block text-right text-sm'>
               – {author}

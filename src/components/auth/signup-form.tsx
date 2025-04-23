@@ -63,7 +63,7 @@ export function SignupForm() {
     },
   });
 
-  const { mutate: resendVerificationToken, isPending: isResendingToken } =
+  const { mutate: resendVerificationToken } =
     trpc.auth.resendVerificationToken.useMutation({
       onSuccess: () => {
         setCooldown(60);
