@@ -1,3 +1,4 @@
+import { cryptosPreviewData } from "@/utils/crypto.data";
 import { clsx, type ClassValue } from "clsx";
 import { format } from "date-fns";
 import { twMerge } from "tailwind-merge";
@@ -39,3 +40,27 @@ export const timeOptions = Array.from({ length: 24 }, (_, i) => {
   const hour = i.toString().padStart(2, "0");
   return `${hour}:00`;
 });
+
+export const cryptoSymbolsToNames = (symbols: string[]): string[] => {
+  const cryptoData = cryptosPreviewData;
+  const names = symbols.map((symbol) => {
+    const crypto = cryptoData.find((crypto) => crypto.symbol === symbol);
+    return crypto ? crypto.name : symbol;
+  });
+  return names;
+};
+
+export const cryptoSymbolToName = (symbol: string): string => {
+  const cryptoData = cryptosPreviewData;
+  const crypto = cryptoData.find((crypto) => crypto.symbol === symbol);
+  return crypto ? crypto.name : symbol;
+};
+
+export const cryptoNamesToSymbols = (names: string[]): string[] => {
+  const cryptoData = cryptosPreviewData;
+  const symbols = names.map((name) => {
+    const crypto = cryptoData.find((crypto) => crypto.name === name);
+    return crypto ? crypto.symbol : name;
+  });
+  return symbols;
+};

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { cn } from "@/lib/utils";
+import { cn, cryptoSymbolsToNames, cryptoSymbolToName } from "@/lib/utils";
+import { INewsletterComponent } from "@/types";
 import { cryptosPreviewData } from "@/utils/crypto.data";
 import { quotesPreviewData } from "@/utils/quotes.data";
 import { useSortable } from "@dnd-kit/sortable";
@@ -42,16 +43,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import type { NewsletterComponent } from "@/components/newsletter/create/newsletter-creator";
 
 interface NewsletterComponentCardProps {
-  component: NewsletterComponent;
+  component: INewsletterComponent;
   onRemove: (id: string) => void;
   onUpdate: (
     id: string,
     params: {
       city?: string;
-      currency?: string;
       currencies?: string[];
       quote?: string;
       author?: string;
@@ -78,73 +77,50 @@ export function NewsletterComponentCard({
     component.params.currencies || [],
   );
   const [quoteId, setQuoteId] = useState<number>(
-    component.params.quoteId !== undefined
-      ? component.params.quoteId
-      : Math.floor(Math.random() * quotesPreviewData.length),
+    component.params.quoteId ??
+      Math.floor(Math.random() * quotesPreviewData.length),
   );
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
 
-  // Create separate refs for different element types
   const inputRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (initialEditMode) {
-      setIsEditing(true);
-    }
+    if (initialEditMode) setIsEditing(true);
   }, [initialEditMode]);
 
   useEffect(() => {
-    if (isEditing) {
-      // Focus the appropriate element based on component type
-      if (component.type === "weather" && inputRef.current) {
-        inputRef.current.focus();
-      } else if (component.type === "crypto" && selectRef.current) {
-        selectRef.current.focus();
-      }
-    }
+    if (!isEditing) return;
+    if (component.type === "weather") inputRef.current?.focus();
+    else if (component.type === "crypto") selectRef.current?.focus();
   }, [isEditing, component.type]);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: component.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  const style = { transform: CSS.Transform.toString(transform), transition };
 
   const validateInput = () => {
     if (component.type === "weather" && !city.trim()) {
       setError("Please enter a city name");
       return false;
     }
-
     if (component.type === "crypto" && currencies.length === 0) {
       setError("Please select at least one cryptocurrency");
       return false;
     }
-
     setError("");
     return true;
   };
 
   const handleSave = () => {
-    if (!validateInput()) {
-      return;
-    }
-
-    if (component.type === "weather") {
-      onUpdate(component.id, { city });
-    } else if (component.type === "crypto") {
+    if (!validateInput()) return;
+    if (component.type === "weather") onUpdate(component.id, { city });
+    else if (component.type === "crypto")
       onUpdate(component.id, { currencies });
-    } else if (component.type === "quote") {
-      const selectedQuote = quotesPreviewData[quoteId];
-      onUpdate(component.id, {
-        quote: selectedQuote.quote,
-        author: selectedQuote.author,
-        quoteId,
-      });
+    else if (component.type === "quote") {
+      const { quote, author } = quotesPreviewData[quoteId];
+      onUpdate(component.id, { quote, author, quoteId });
     }
     setIsEditing(false);
   };
@@ -157,19 +133,13 @@ export function NewsletterComponentCard({
       handleSave();
     } else if (e.key === "Escape") {
       e.preventDefault();
-      if (component.isNew) {
-        onRemove(component.id);
-      } else {
-        setIsEditing(false);
-      }
+      component.isNew ? onRemove(component.id) : setIsEditing(false);
     }
   };
 
   const toggleCurrency = (value: string) => {
-    setCurrencies((current) =>
-      current.includes(value)
-        ? current.filter((c) => c !== value)
-        : [...current, value],
+    setCurrencies((prev) =>
+      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value],
     );
     if (error) setError("");
   };
@@ -179,11 +149,24 @@ export function NewsletterComponentCard({
     do {
       newQuoteId = Math.floor(Math.random() * quotesPreviewData.length);
     } while (newQuoteId === quoteId && quotesPreviewData.length > 1);
-
     setQuoteId(newQuoteId);
   };
 
   const currentQuote = quotesPreviewData[quoteId];
+  const displayTitle =
+    component.type === "weather"
+      ? "Weather"
+      : component.type === "crypto"
+        ? "Cryptocurrency"
+        : "Quote";
+  const displayIcon =
+    component.type === "weather" ? (
+      <Cloud className='mr-2 h-5 w-5 text-blue-500' />
+    ) : component.type === "crypto" ? (
+      <CreditCard className='mr-2 h-5 w-5 text-green-500' />
+    ) : (
+      <Quote className='mr-2 h-5 w-5 text-purple-500' />
+    );
 
   return (
     <Card ref={setNodeRef} style={style} className='relative gap-2 pl-1'>
@@ -197,20 +180,8 @@ export function NewsletterComponentCard({
 
       <CardHeader className='flex flex-row items-center justify-between pb-2 pl-8'>
         <div className='flex items-center'>
-          {component.type === "weather" ? (
-            <Cloud className='mr-2 h-5 w-5 text-blue-500' />
-          ) : component.type === "crypto" ? (
-            <CreditCard className='mr-2 h-5 w-5 text-green-500' />
-          ) : (
-            <Quote className='mr-2 h-5 w-5 text-purple-500' />
-          )}
-          <span className='font-medium'>
-            {component.type === "weather"
-              ? "Weather"
-              : component.type === "crypto"
-                ? "Cryptocurrency"
-                : "Quote"}
-          </span>
+          {displayIcon}
+          <span className='font-medium'>{displayTitle}</span>
         </div>
         <div className='flex space-x-1'>
           {!isEditing && (
@@ -281,7 +252,7 @@ export function NewsletterComponentCard({
                               variant='secondary'
                               className='mr-1 mb-1'
                             >
-                              {currency}
+                              {cryptoSymbolToName(currency)}
                               <span
                                 className='ring-offset-background focus:ring-ring ml-1 cursor-pointer rounded-full outline-none focus:ring-2 focus:ring-offset-2'
                                 role='button'
@@ -385,7 +356,9 @@ export function NewsletterComponentCard({
                 Price of{" "}
                 <span className='font-medium'>
                   {component.params.currencies &&
-                    component.params.currencies.join(", ")}
+                    cryptoSymbolsToNames(component.params.currencies).join(
+                      ", ",
+                    )}
                 </span>
               </p>
             )}
