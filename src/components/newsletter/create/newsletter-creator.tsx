@@ -70,6 +70,12 @@ export function NewsletterCreator() {
   };
 
   const handleAddComponentType = (type: IComponentType) => {
+    // Check if this type already exists in the components array
+    if (components.some((component) => component.type === type)) {
+      // You could show an error message here if needed
+      return;
+    }
+
     const id = `component-${Date.now()}`;
     // Add a new empty component that will be in edit mode
     setComponents([
@@ -206,6 +212,9 @@ export function NewsletterCreator() {
             <ComponentSelector
               onSelectType={handleAddComponentType}
               onCancel={() => setShowSelector(false)}
+              existingComponentTypes={components.map(
+                (component) => component.type,
+              )}
             />
           )}
 

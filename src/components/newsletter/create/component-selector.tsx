@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface ComponentSelectorProps {
   onSelectType: (type: IComponentType) => void;
   onCancel: () => void;
+  existingComponentTypes: IComponentType[];
 }
 
 const componentOptions = [
@@ -35,6 +36,7 @@ const componentOptions = [
 export function ComponentSelector({
   onSelectType,
   onCancel,
+  existingComponentTypes,
 }: ComponentSelectorProps) {
   return (
     <Card>
@@ -48,24 +50,36 @@ export function ComponentSelector({
       </CardHeader>
       <CardContent>
         <div className='grid grid-cols-3 gap-4'>
-          {componentOptions.map((option) => (
-            <div
-              key={option.type}
-              className='group cursor-pointer'
-              onClick={() => onSelectType(option.type)}
-            >
-              <Card className='group-hover:border-primary border-1 transition-all group-hover:shadow-md'>
-                <CardContent className='flex flex-col items-center text-center'>
-                  <div
-                    className={`mb-3 flex h-12 w-12 items-center justify-center rounded-full ${option.bgColor}`}
-                  >
-                    {option.icon}
-                  </div>
-                  <h3 className='font-medium'>{option.title}</h3>
-                </CardContent>
-              </Card>
-            </div>
-          ))}
+          {componentOptions.map((option) => {
+            const isDisabled = existingComponentTypes.includes(option.type);
+            return (
+              <div
+                key={option.type}
+                className={`group ${isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                onClick={() => !isDisabled && onSelectType(option.type)}
+              >
+                <Card
+                  className={`border-1 transition-all ${!isDisabled ? "group-hover:border-primary group-hover:shadow-md" : ""}`}
+                >
+                  <CardContent className='flex flex-col items-center text-center'>
+                    <div
+                      className={`mb-3 flex h-12 w-12 items-center justify-center rounded-full ${option.bgColor}`}
+                    >
+                      {option.icon}
+                    </div>
+                    <h3 className='font-medium'>{option.title}</h3>
+                    {isDisabled ? (
+                      <p className='text-muted-foreground mt-1 text-xs'>
+                        Already added
+                      </p>
+                    ) : (
+                      <p className='mt-1 text-xs text-white'>-</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            );
+          })}
         </div>
       </CardContent>
     </Card>

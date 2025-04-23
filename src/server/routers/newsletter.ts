@@ -130,6 +130,7 @@ export const newsletterRouter = router({
         components: z.array(
           z.object({
             type: z.string(),
+            order: z.number(),
             params: z
               .object({
                 city: z.string().optional(),
@@ -147,6 +148,14 @@ export const newsletterRouter = router({
       if (!input.userEmail) {
         throw new Error("User email is required");
       }
+
+      const order = input.components
+        .map((component) => ({
+          type: component.type,
+          order: component.order,
+        }))
+        .sort((a, b) => a.order - b.order);
+
       const weatherComponentCity = input.components
         .filter((component) => component.type === "weather")
         .map((component) => component.params?.city);
@@ -160,14 +169,23 @@ export const newsletterRouter = router({
           condition: weather.condition,
         };
       }
-
+      let cryptoInfos = null;
       const currenciesSymbols = input.components
         .filter((component) => component.type === "crypto")
         .map((component) => component.params?.currencies)
         .flat()
         .filter((currency) => currency !== undefined && currency !== null);
 
-      const cryptoInfos = await fetchCryptoData(currenciesSymbols);
+      if (currenciesSymbols.length > 0) {
+        cryptoInfos = await fetchCryptoData(currenciesSymbols);
+      }
+
+      const quoteInfos = input.components
+        .filter((component) => component.type === "quote")
+        .map((component) => ({
+          quote: component.params?.quote ?? "",
+          author: component.params?.author ?? "",
+        }));
 
       return await resend.emails.send({
         from: "Niklas <clubverse@niklas.sh>",
@@ -179,7 +197,9 @@ export const newsletterRouter = router({
           interval: input.interval,
           cryptoInfo: cryptoInfos,
           weatherInfo: weatherInfo,
+          quoteInfos: quoteInfos,
           token: input.token,
+          order: order,
         }),
       });
     }),

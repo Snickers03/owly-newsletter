@@ -46,6 +46,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           params: {
             currencies: component.crypto.currencies.split(","),
           },
+          order: component.order,
         };
       }
 
@@ -55,6 +56,17 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           params: {
             city: component.weather.city,
           },
+          order: component.order,
+        };
+      }
+      if (component.type === "quote" && component.quote) {
+        return {
+          type: "quote",
+          params: {
+            quote: component.quote.quote,
+            author: component.quote.author,
+          },
+          order: component.order,
         };
       }
 
@@ -104,6 +116,17 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           isNew: false,
           params: {
             city: component.weather.city,
+          },
+        };
+      }
+      if (component.type === "quote" && component.quote) {
+        return {
+          id: component.id,
+          type: "quote",
+          isNew: false,
+          params: {
+            quote: component.quote.quote,
+            author: component.quote.author,
           },
         };
       }

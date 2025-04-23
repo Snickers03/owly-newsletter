@@ -31,9 +31,19 @@ interface NewsletterTemplateEmailProps {
   title?: string;
   weatherInfo?: WeatherInfo | null;
   cryptoInfo?: CryptoInfo[] | null;
+  quoteInfos?:
+    | {
+        quote: string;
+        author: string;
+      }[]
+    | null;
   interval?: string;
   time?: string;
   token?: string;
+  order: {
+    type: string;
+    order: number;
+  }[];
 }
 
 export default function NewsletterTemplateEmail({
@@ -51,11 +61,111 @@ export default function NewsletterTemplateEmail({
       percent_change_24h: 2.5,
     },
   ],
+  quoteInfos = [
+    {
+      quote:
+        "The only limit to our realization of tomorrow is our doubts of today.",
+      author: "Franklin D. Roosevelt",
+    },
+  ],
   interval = "Daily",
   time = "9:00 AM",
   token = "123456",
+  order = [
+    { type: "weather", order: 1 },
+    { type: "crypto", order: 2 },
+    { type: "quote", order: 3 },
+  ],
 }: NewsletterTemplateEmailProps) {
   const unsubscribeUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/unsubscribe?token=${token}`;
+
+  // Sort sections based on order
+  const orderedSections = [...order].sort((a, b) => a.order - b.order);
+
+  // Function to render the appropriate section based on type
+  const renderSection = (type: string) => {
+    switch (type) {
+      case "weather":
+        return (
+          weatherInfo && (
+            <Section style={card}>
+              <Heading as='h3' style={cardTitle}>
+                Weather Forecast
+              </Heading>
+              <Row>
+                <Column style={{ width: "40px" }}>
+                  <Text style={iconContainer}>☁️</Text>
+                </Column>
+                <Column>
+                  <Text style={cardSubtitle}>{weatherInfo.city}</Text>
+                  <Text style={cardText}>
+                    {numberToTemperature(weatherInfo.temperature)},{" "}
+                    {weatherInfo.condition}
+                  </Text>
+                </Column>
+              </Row>
+            </Section>
+          )
+        );
+      case "crypto":
+        return (
+          cryptoInfo &&
+          cryptoInfo.length > 0 && (
+            <Section style={card}>
+              <Heading as='h3' style={cardTitle}>
+                Cryptocurrency Prices
+              </Heading>
+              {cryptoInfo.map((crypto, index) => (
+                <Row
+                  key={crypto.symbol}
+                  style={index > 0 ? { marginTop: "12px" } : {}}
+                >
+                  <Column style={{ width: "40px" }}>
+                    <Text style={iconContainer}>💰</Text>
+                  </Column>
+                  <Column>
+                    <Text style={cardSubtitle}>
+                      {crypto.name} ({crypto.symbol})
+                    </Text>
+                    <Text style={cardText}>
+                      Price: {crypto.price.toLocaleString()} € | Change (24h):{" "}
+                      {crypto.percent_change_24h > 0
+                        ? `+${crypto.percent_change_24h.toFixed(2)}`
+                        : crypto.percent_change_24h.toFixed(2)}
+                      %
+                    </Text>
+                  </Column>
+                </Row>
+              ))}
+            </Section>
+          )
+        );
+      case "quote":
+        return (
+          quoteInfos &&
+          quoteInfos.length > 0 && (
+            <Section style={card}>
+              <Heading as='h3' style={cardTitle}>
+                Quotes
+              </Heading>
+              {quoteInfos.map((quoteInfo, index) => (
+                <Row key={index} style={index > 0 ? { marginTop: "12px" } : {}}>
+                  <Column style={{ width: "40px" }}>
+                    <Text style={iconContainer}>💬</Text>
+                  </Column>
+                  <Column>
+                    <Text style={cardSubtitle}>"{quoteInfo.quote}"</Text>
+                    <Text style={cardText}>- {quoteInfo.author}</Text>
+                  </Column>
+                </Row>
+              ))}
+            </Section>
+          )
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <Html>
@@ -92,57 +202,12 @@ export default function NewsletterTemplateEmail({
 
           {/* Content */}
           <Section style={content}>
-            {/* Weather Section */}
-            {weatherInfo && (
-              <Section style={card}>
-                <Heading as='h3' style={cardTitle}>
-                  Weather Forecast
-                </Heading>
-                <Row>
-                  <Column style={{ width: "40px" }}>
-                    <Text style={iconContainer}>☁️</Text>
-                  </Column>
-                  <Column>
-                    <Text style={cardSubtitle}>{weatherInfo.city}</Text>
-                    <Text style={cardText}>
-                      {numberToTemperature(weatherInfo.temperature)} ,{" "}
-                      {weatherInfo.condition}
-                    </Text>
-                  </Column>
-                </Row>
-              </Section>
-            )}
-
-            {/* Crypto Section */}
-            {cryptoInfo && cryptoInfo.length > 0 && (
-              <Section style={card}>
-                <Heading as='h3' style={cardTitle}>
-                  Cryptocurrency Prices
-                </Heading>
-                {cryptoInfo.map((crypto, index) => (
-                  <Row
-                    key={crypto.symbol}
-                    style={index > 0 ? { marginTop: "12px" } : {}}
-                  >
-                    <Column style={{ width: "40px" }}>
-                      <Text style={iconContainer}>💰</Text>
-                    </Column>
-                    <Column>
-                      <Text style={cardSubtitle}>
-                        {crypto.name} ({crypto.symbol})
-                      </Text>
-                      <Text style={cardText}>
-                        Price: {crypto.price.toLocaleString()} € | Change (24h):{" "}
-                        {crypto.percent_change_24h > 0
-                          ? `+${crypto.percent_change_24h.toFixed(2)}`
-                          : crypto.percent_change_24h.toFixed(2)}
-                        %
-                      </Text>
-                    </Column>
-                  </Row>
-                ))}
-              </Section>
-            )}
+            {/* Render sections in the specified order */}
+            {orderedSections.map((section) => (
+              <div key={`${section.type}-${section.order}`}>
+                {renderSection(section.type)}
+              </div>
+            ))}
           </Section>
 
           <Hr style={divider} />
