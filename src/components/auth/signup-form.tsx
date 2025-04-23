@@ -6,7 +6,7 @@ import { signUpSchema } from "@/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/app/_trpc/client";
@@ -43,10 +43,10 @@ export function SignupForm() {
         setStep("verification");
       },
       onError: (error) => {
-        if (error.message === "User already exists") {
+        if (error.message === "Email already in use") {
           form.setError("email", {
             type: "manual",
-            message: "Email already exists",
+            message: "Email already in use",
           });
         } else {
           console.error("Signup failed", error);
@@ -62,6 +62,19 @@ export function SignupForm() {
       console.error("Verification failed", error);
     },
   });
+
+  const { mutate: resendVerificationToken, isPending: isResendingToken } =
+    trpc.auth.resendVerificationToken.useMutation({
+      onSuccess: () => {
+        setCooldown(60);
+      },
+      onError: (error) => {
+        console.error("Failed to resend verification code", error);
+      },
+      onSettled: () => {
+        setIsResending(false);
+      },
+    });
 
   useEffect(() => {
     const timer =
@@ -84,12 +97,9 @@ export function SignupForm() {
   };
 
   const handleResendCode = () => {
-    if (cooldown > 0) return;
+    if (cooldown > 0 || !email) return;
     setIsResending(true);
-    // TODO
-    console.log("RESEND VERIFICATION CODE");
-    setCooldown(60);
-    setIsResending(false);
+    resendVerificationToken(email);
   };
 
   const renderStep = () => {

@@ -48,6 +48,17 @@ export const authRouter = router({
       }),
     )
     .mutation(async (opts) => {
+      // Check if user already exists
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          email: opts.input.email,
+        },
+      });
+
+      if (existingUser) {
+        throw new Error("Email already in use");
+      }
+
       const hash = await argon2.hash(opts.input.password);
       try {
         const user = await prisma.user.create({
@@ -143,6 +154,43 @@ export const authRouter = router({
       });
 
       return user;
+    }),
+  resendVerificationToken: publicProcedure
+    .input(z.string())
+    .mutation(async (opts) => {
+      const user = await prisma.user.findFirst({
+        where: {
+          email: opts.input,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found.");
+      }
+
+      if (user.verified) {
+        throw new Error("Email already verified.");
+      }
+
+      const newToken = generateRandomSixDigitNumber();
+
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          verificationToken: newToken,
+        },
+      });
+
+      await resend.emails.send({
+        from: "Niklas <clubverse@niklas.sh>",
+        to: user.email,
+        subject: "Verify your account",
+        react: VerifyTokenTemplateEmail({ token: newToken }),
+      });
+
+      return { success: true };
     }),
 
   createResetPasswordToken: publicProcedure
