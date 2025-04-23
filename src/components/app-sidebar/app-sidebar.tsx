@@ -1,5 +1,6 @@
 "use client";
 
+import { APP_MAIN_PAGE } from "@/config";
 import { Newspaper } from "lucide-react";
 
 import {
@@ -23,7 +24,7 @@ const navigationItems = [
   {
     title: "Newsletter",
     icon: Newspaper,
-    href: "/main/newsletter",
+    href: APP_MAIN_PAGE,
     isActive: true,
   },
   // {

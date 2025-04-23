@@ -25,7 +25,7 @@ export function ForgotPasswordForm() {
         if (isResending) {
           setIsResending(false);
         }
-        setCooldown(10);
+        setCooldown(60);
       },
       onError: () => {
         return null;

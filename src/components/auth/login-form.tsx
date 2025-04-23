@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { APP_MAIN_PAGE } from "@/config";
 import { loginSchema } from "@/schemas/auth.schema";
 import { useUserStore } from "@/store/user-store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +31,7 @@ export function LoginForm() {
       setUser(user);
       document.cookie = `token=${user.Session.token}; path=/`;
       form.reset();
-      router.push("/main/newsletter");
+      router.push(APP_MAIN_PAGE);
     },
     onError: (error) => {
       if (error.message === "User not found.") {

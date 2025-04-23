@@ -1,11 +1,11 @@
-import { APP_NAME } from "@/config";
+import { APP_LIVE_LOGO_URL, APP_NAME } from "@/config";
 import { Img, Section, Text } from "@react-email/components";
 
 export default function Header() {
   return (
     <Section className='mb-8 text-center'>
       <Img
-        src={"/logo.png"} // TODO: doenst work in email
+        src={APP_LIVE_LOGO_URL}
         width='60'
         height='60'
         alt='Logo'

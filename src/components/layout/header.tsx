@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { APP_NAME } from "@/config";
+import { APP_MAIN_PAGE, APP_NAME } from "@/config";
 import { useUserStore } from "@/store/user-store";
 
 import { Button } from "../ui/button";
@@ -33,7 +33,7 @@ export const Header = () => {
         <nav className='ml-auto flex gap-4 sm:gap-6'>
           <Button>
             <Link
-              href='/main/newsletter'
+              href={APP_MAIN_PAGE}
               className='text-sm font-medium underline-offset-4 hover:underline'
             >
               Dashboard

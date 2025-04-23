@@ -2,7 +2,6 @@ import Link from "next/link";
 import { toNormalCase } from "@/lib/utils";
 import { INewsletterComponent } from "@/types";
 import { cryptosPreviewData } from "@/utils/crypto.data";
-import { quotesPreviewData } from "@/utils/quotes.data";
 import { Calendar, Clock, Mail } from "lucide-react";
 
 import {
@@ -27,16 +26,89 @@ export function NewsletterPreview({
   interval,
   time,
 }: NewsletterPreviewProps) {
-  // Filter out components that don't have required parameters
-  const validComponents = components.filter((component) => {
-    if (component.type === "weather" && !component.params.city) return false;
+  const validComponents = components.filter(({ type, params }) => {
+    if (type === "weather" && !params.city) return false;
     if (
-      component.type === "crypto" &&
-      (!component.params.currencies || component.params.currencies.length === 0)
+      type === "crypto" &&
+      (!params.currencies || params.currencies.length === 0)
     )
       return false;
     return true;
   });
+
+  const renderComponent = (component: INewsletterComponent) => {
+    const { id, type, params } = component;
+
+    if (type === "weather") {
+      return (
+        <div key={id} className='rounded-lg border p-3'>
+          <div>
+            <h3 className='pb-2 text-sm font-medium'>Weather Forecast</h3>
+            <div>
+              <p className='text-sm font-semibold'>{params.city}</p>
+              <p className='text-muted-foreground text-xs'>
+                22°C, Partly cloudy
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (type === "crypto") {
+      return (
+        <div key={id} className='rounded-lg border p-3'>
+          <h3 className='pb-2 text-sm font-medium'>Cryptocurrency Prices</h3>
+          <div className='space-y-2'>
+            {(params.currencies || []).map((currency) => {
+              const crypto = cryptosPreviewData.find(
+                (c) => c.name === currency || c.symbol === currency,
+              );
+              if (!crypto) return null;
+
+              return (
+                <div key={crypto.name}>
+                  <div>
+                    <p className='text-sm font-semibold'>
+                      {crypto.name} ({crypto.symbol})
+                    </p>
+                    <div className='flex items-center text-xs'>
+                      <p className='text-muted-foreground'>
+                        Price: {crypto.price}€
+                      </p>
+                      <span className='text-muted-foreground mx-1'>|</span>
+                      <p className='text-muted-foreground'>
+                        Change: {crypto.change}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    if (type === "quote") {
+      let { quote, author } = params;
+      if (!quote) return null;
+
+      return (
+        <div key={id} className='rounded-lg border p-3'>
+          <blockquote className='text-muted-foreground italic'>
+            "{quote}"
+            <br />
+            <span className='text-foreground mt-2 block text-right text-sm'>
+              – {author}
+            </span>
+          </blockquote>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <Card className='w-full gap-3 border py-0 shadow-sm'>
@@ -54,6 +126,7 @@ export function NewsletterPreview({
           </div>
         </div>
       </CardHeader>
+
       <CardContent className='bg-white p-4'>
         {validComponents.length === 0 ? (
           <div className='text-muted-foreground py-4 text-center text-sm'>
@@ -61,144 +134,11 @@ export function NewsletterPreview({
           </div>
         ) : (
           <div className='space-y-3'>
-            {validComponents.map((component) => {
-              if (component.type === "weather") {
-                return (
-                  <div key={component.id} className='rounded-lg border p-3'>
-                    <div className='space-y-1'>
-                      <h3 className='text-sm font-medium'>Weather Forecast</h3>
-                      <div className='flex items-center'>
-                        <div className='mr-2 rounded-full bg-blue-100 p-2'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            width='16'
-                            height='16'
-                            viewBox='0 0 24 24'
-                            fill='none'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            className='text-blue-500'
-                          >
-                            <path d='M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z' />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className='text-sm font-semibold'>
-                            {component.params.city}
-                          </p>
-                          <p className='text-muted-foreground text-xs'>
-                            22°C, Partly cloudy
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              } else if (component.type === "crypto") {
-                const selectedCurrencies = component.params.currencies || [];
-
-                return (
-                  <div key={component.id} className='rounded-lg border p-3'>
-                    <h3 className='pb-3 text-sm font-medium'>
-                      Cryptocurrency Prices
-                    </h3>
-                    <div className='space-y-2'>
-                      {selectedCurrencies.map((currencyName) => {
-                        const crypto = cryptosPreviewData.find(
-                          (c) =>
-                            c.name === currencyName ||
-                            c.symbol === currencyName,
-                        );
-                        if (!crypto) return null;
-
-                        return (
-                          <div key={crypto.name} className='flex items-center'>
-                            <div className='mr-2 rounded-full bg-green-100 p-2'>
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                width='16'
-                                height='16'
-                                viewBox='0 0 24 24'
-                                fill='none'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                className='text-green-500'
-                              >
-                                <rect
-                                  width='18'
-                                  height='12'
-                                  x='3'
-                                  y='8'
-                                  rx='2'
-                                />
-                                <path d='M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2' />
-                                <circle cx='12' cy='14' r='2' />
-                                <path d='M12 12v-1' />
-                                <path d='M12 17v-1' />
-                              </svg>
-                            </div>
-                            <div>
-                              <p className='text-sm font-semibold'>
-                                {crypto.name} ({crypto.symbol})
-                              </p>
-                              <div className='flex items-center text-xs'>
-                                <p className='text-muted-foreground'>
-                                  Price: {crypto.price}€
-                                </p>
-                                <span className='text-muted-foreground mx-1'>
-                                  |
-                                </span>
-                                <p className='text-muted-foreground'>
-                                  Change: {crypto.change}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              } else if (component.type === "quote") {
-                // Get the quote from params or from the quotes data using quoteId
-                let quoteText = component.params.quote;
-                let authorText = component.params.author;
-
-                if (!quoteText && component.params.quoteId !== undefined) {
-                  const quoteData = quotesPreviewData[component.params.quoteId];
-                  quoteText = quoteData.quote;
-                  authorText = quoteData.author;
-                } else if (!quoteText) {
-                  // Fallback to a random quote if no quote is specified
-                  const randomIndex = Math.floor(
-                    Math.random() * quotesPreviewData.length,
-                  );
-                  const randomQuote = quotesPreviewData[randomIndex];
-                  quoteText = randomQuote.quote;
-                  authorText = randomQuote.author;
-                }
-
-                return (
-                  <div key={component.id} className='rounded-lg border p-3'>
-                    <blockquote className='text-muted-foreground italic'>
-                      "{quoteText}"
-                      <br />
-                      <span className='text-foreground mt-2 block text-right text-sm'>
-                        – {authorText}
-                      </span>
-                    </blockquote>
-                  </div>
-                );
-              }
-              return null;
-            })}
+            {validComponents.map(renderComponent)}
           </div>
         )}
       </CardContent>
+
       <CardFooter className='text-muted-foreground rounded-b-lg border-t bg-gray-50 px-4 py-3 text-center text-xs'>
         <p className='w-full text-xs'>
           You are receiving this newsletter because you subscribed to it.

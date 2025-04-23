@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "./../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -44,7 +45,7 @@ model Newsletter {
   interval   IntervalType
   time       String
   userId     String
-  user       User         @relation(fields: [userId], references: [id])
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   components Component[]
   active     Boolean      @default(true)
   token      String       @unique @default(cuid())
