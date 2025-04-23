@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 
 import AuthProvider from "@/components/providers/auth-provider";
 
+import { PostHogProvider } from "../components/PostHogProvider";
 import TrpcProvider from "../components/providers/trpc-provider";
 
 import "./globals.css";
@@ -26,20 +27,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang='en'>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TrpcProvider>
-          <AuthProvider>
-            {children}
-            <Toaster position='top-center' />
-          </AuthProvider>
-        </TrpcProvider>
+        <PostHogProvider>
+          <TrpcProvider>
+            <AuthProvider>
+              {children}
+              <Toaster position='top-center' />
+            </AuthProvider>
+          </TrpcProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
