@@ -1,4 +1,3 @@
-// app/unsubscribe/page.tsx
 import { Suspense } from "react";
 
 import UnsubscribeClient from "@/components/unsubscribe/unsubscribe-client";

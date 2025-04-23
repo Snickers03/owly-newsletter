@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { timeOptions } from "@/lib/newsletter.utils";
+import { timeOptions } from "@/lib/utils";
 import { useUserStore } from "@/store/user-store";
-import type { IComponentType } from "@/types";
+import type {
+  IComponentParams,
+  IComponentType,
+  INewsletterComponent,
+} from "@/types";
 import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -13,6 +17,8 @@ import {
 } from "@dnd-kit/sortable";
 import type { IntervalType } from "@prisma/client";
 import { PlusCircle, Save } from "lucide-react";
+import { nanoid } from "nanoid";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,121 +37,81 @@ import { NewsletterComponentCard } from "@/components/newsletter/create/newslett
 import { NewsletterPreview } from "@/components/newsletter/create/newsletter-preview";
 import { trpc } from "@/app/_trpc/client";
 
-export type NewsletterComponent = {
-  id: string;
-  type: IComponentType;
-  params: {
-    city?: string;
-    currency?: string;
-    currencies?: string[];
-    quote?: string;
-    author?: string;
-    quoteId?: number;
-  };
-  isNew?: boolean;
-};
-
-export function NewsletterCreator() {
+export const NewsletterCreator = () => {
   const user = useUserStore((state) => state.user);
+  const userId = user?.id;
   const router = useRouter();
-  // Form 1: Base Configuration
+
+  const { mutate: createNewsletter } = trpc.newsletter.create.useMutation({
+    onSuccess: () => router.push("/main/newsletter"),
+    onError: () =>
+      toast.error("Error creating newsletter. Please try again later."),
+  });
+
   const [title, setTitle] = useState("");
-  const [interval, setInterval] = useState<string>("weekly");
-  const [time, setTime] = useState("09:00");
-  // Form 2: Components
-  const [components, setComponents] = useState<NewsletterComponent[]>([]);
-
+  const [interval, setInterval] = useState("weekly");
+  const [time, setTime] = useState("08:00");
+  const [components, setComponents] = useState<INewsletterComponent[]>([]);
   const [showSelector, setShowSelector] = useState(false);
+  const canSave = title.trim() !== "" && components.length > 0;
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       setComponents((items) => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
         const newIndex = items.findIndex((item) => item.id === over.id);
-
         return arrayMove(items, oldIndex, newIndex);
       });
     }
-  };
+  }, []);
 
-  const handleAddComponentType = (type: IComponentType) => {
-    // Check if this type already exists in the components array
-    if (components.some((component) => component.type === type)) {
-      // You could show an error message here if needed
-      return;
-    }
-
-    const id = `component-${Date.now()}`;
-    // Add a new empty component that will be in edit mode
-    setComponents([
-      ...components,
-      {
-        id,
-        type,
-        params: {},
-        isNew: true, // Flag to indicate this is a new component that should be in edit mode
-      },
-    ]);
-    setShowSelector(false);
-  };
-
-  const handleRemoveComponent = (id: string) => {
-    setComponents(components.filter((component) => component.id !== id));
-  };
-
-  const handleUpdateComponent = (
-    id: string,
-    params: {
-      city?: string;
-      currencies?: string[];
-      quote?: string;
-      author?: string;
-      quoteId?: number;
+  const handleAddComponentType = useCallback(
+    (type: IComponentType) => {
+      if (components.some((component) => component.type === type)) return;
+      const id = nanoid();
+      setComponents((prev) => [...prev, { id, type, params: {}, isNew: true }]);
+      setShowSelector(false);
     },
-  ) => {
-    setComponents(
-      components.map((component) =>
-        component.id === id
-          ? {
-              ...component,
-              params: { ...component.params, ...params },
-              isNew: false,
-            }
-          : component,
-      ),
-    );
-  };
+    [components],
+  );
 
-  const { mutate: createNewsletter } = trpc.newsletter.create.useMutation({
-    onSuccess: () => {
-      router.push("/main/newsletter");
+  const handleRemoveComponent = useCallback((id: string) => {
+    setComponents((prev) => prev.filter((component) => component.id !== id));
+  }, []);
+
+  const handleUpdateComponent = useCallback(
+    (id: string, params: IComponentParams) => {
+      setComponents((prev) =>
+        prev.map((component) =>
+          component.id === id
+            ? {
+                ...component,
+                params: { ...component.params, ...params },
+                isNew: false,
+              }
+            : component,
+        ),
+      );
     },
-    onError: (error) => {
-      // Handle error (e.g., show an error message)
-      console.error("Error creating newsletter:", error);
-    },
-  });
+    [],
+  );
 
   const handleSave = () => {
     const newsletterData = {
-      userId: user?.id ?? "",
+      userId: userId ?? "",
       title,
       interval: interval as IntervalType,
       time,
-      components: components.map((component) => ({
-        type: component.type,
-        params: component.params,
-      })),
+      components: components.map(({ type, params }) => ({ type, params })),
     };
     createNewsletter(newsletterData);
   };
 
   return (
     <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
-      {/* Left Column - Configuration */}
+      {/* Left Column */}
       <div className='space-y-6'>
-        {/* Form 1: Base Configuration */}
         <Card>
           <CardContent>
             <div className='space-y-4'>
@@ -153,7 +119,7 @@ export function NewsletterCreator() {
                 <Label htmlFor='title'>Newsletter Title</Label>
                 <Input
                   id='title'
-                  placeholder='My Personal Newsletter'
+                  placeholder='My Newsletter'
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
@@ -176,12 +142,12 @@ export function NewsletterCreator() {
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='time'>Delivery Time</Label>
+                  <Label htmlFor='time'>Select Delivery Time</Label>
                   <Select value={time} onValueChange={setTime}>
                     <SelectTrigger id='time'>
                       <SelectValue placeholder='Select a time' />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className='max-h-[200px] overflow-y-auto'>
                       {timeOptions.map((timeOption) => (
                         <SelectItem key={timeOption} value={timeOption}>
                           {timeOption}
@@ -194,7 +160,7 @@ export function NewsletterCreator() {
             </div>
           </CardContent>
         </Card>
-        {/* Form 2: Components */}
+
         <div className='space-y-4'>
           <div className='flex items-center justify-between'>
             <h2 className='text-xl font-semibold'>Newsletter Components</h2>
@@ -212,9 +178,7 @@ export function NewsletterCreator() {
             <ComponentSelector
               onSelectType={handleAddComponentType}
               onCancel={() => setShowSelector(false)}
-              existingComponentTypes={components.map(
-                (component) => component.type,
-              )}
+              existingComponentTypes={components.map((c) => c.type)}
             />
           )}
 
@@ -257,10 +221,7 @@ export function NewsletterCreator() {
         </div>
 
         <div className='flex justify-end'>
-          <Button
-            onClick={handleSave}
-            disabled={!title || components.length === 0}
-          >
+          <Button onClick={handleSave} disabled={!canSave}>
             <Save className='mr-2 h-4 w-4' />
             Save Newsletter
           </Button>
@@ -273,7 +234,7 @@ export function NewsletterCreator() {
         <div className='sticky top-4'>
           <NewsletterPreview
             title={title || "My Newsletter"}
-            token={"123456"}
+            token={userId ?? ""}
             components={components}
             interval={interval}
             time={time}
@@ -282,4 +243,4 @@ export function NewsletterCreator() {
       </div>
     </div>
   );
-}
+};

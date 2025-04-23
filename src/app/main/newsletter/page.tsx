@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useUserStore } from "@/store/user-store";
 import { PlusCircle } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/main-layout";
@@ -11,30 +12,22 @@ import { trpc } from "@/app/_trpc/client";
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
-
-  const { data: newsletters, refetch } = trpc.newsletter.getByUserId.useQuery(
-    user ? user.id : "",
-    {
-      enabled: !!user,
-    },
-  );
+  const userId = user?.id;
+  const { data: newsletters, refetch: refetchNewsletters } =
+    trpc.newsletter.getByUserId.useQuery(userId ?? "", {
+      enabled: !!userId,
+    });
 
   const { mutate: deleteNewsletter } = trpc.newsletter.delete.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
-    onError: (error) => {
-      console.error("Error deleting newsletter:", error);
-    },
+    onSuccess: () => refetchNewsletters(),
+    onError: () =>
+      toast.error("Error deleting newsletter. Please try again later."),
   });
 
   const { mutate: toggleActive } = trpc.newsletter.toggleActive.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
-    onError: (error) => {
-      console.error("Error toggling newsletter:", error);
-    },
+    onSuccess: () => refetchNewsletters(),
+    onError: () =>
+      toast.error("Error toggling newsletter. Please try again later."),
   });
 
   return (

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/main-layout";
 import { NewsletterComponent } from "@/components/newsletter/create/newsletter-creator";
 import { NewsletterPreview } from "@/components/newsletter/create/newsletter-preview";
+import { NewsletterNotFound } from "@/components/newsletter/view/newsletter-not-found";
 import { trpc } from "@/app/_trpc/client";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -82,7 +83,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         title: newsletter.title,
         interval: newsletter.interval,
         time: newsletter.time,
-        // TODO: weird bug
         components: componentsParams ?? [],
       });
     }
@@ -140,22 +140,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const transformedComponents: NewsletterComponent[] =
     transformComponents(newsletter?.components ?? []) ?? [];
 
-  if (!newsletter) {
-    return (
-      <MainLayout>
-        <h1 className='mb-2 text-3xl font-bold'>Newsletter Not Found</h1>
-        <p className='text-muted-foreground mb-3'>
-          The newsletter you are trying to edit does not exist.
-        </p>
-        <Link href='/main/newsletter'>
-          <Button variant='ghost' size='sm' className='gap-1'>
-            <ArrowLeft className='h-4 w-4' />
-            Back to Newsletters
-          </Button>
-        </Link>
-      </MainLayout>
-    );
-  }
+  if (!newsletter) return <NewsletterNotFound />;
 
   return (
     <MainLayout>

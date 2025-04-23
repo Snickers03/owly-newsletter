@@ -134,7 +134,6 @@ export const newsletterRouter = router({
             params: z
               .object({
                 city: z.string().optional(),
-                currency: z.string().optional(),
                 currencies: z.array(z.string()).optional(),
                 quote: z.string().optional(),
                 author: z.string().optional(),

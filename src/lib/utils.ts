@@ -1,10 +1,12 @@
 import { clsx, type ClassValue } from "clsx";
-import moment from "moment";
+import { format } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+// auth
 export const generateRandomSixDigitNumber = () => {
   return Math.floor(100000 + Math.random() * 900000);
 };
@@ -16,14 +18,9 @@ export const toNormalCase = (str: string) => {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
-export const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(date);
-};
-
-export const formatDate2 = (date: Date | null): string => {
+export const formatDate = (date: Date | null): string => {
   if (!date) return "-";
-  return moment(date).format("DD.MM.YYYY");
+  return format(date, "MMM d, yyyy");
 };
 
 export const numberToTemperature = (temp: number): string => {
@@ -36,3 +33,9 @@ export function parseCurrencies(
   if (!currenciesString) return [];
   return currenciesString.split(",").filter(Boolean);
 }
+
+// newsletter time options
+export const timeOptions = Array.from({ length: 24 }, (_, i) => {
+  const hour = i.toString().padStart(2, "0");
+  return `${hour}:00`;
+});

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { formatDate2, toNormalCase } from "@/lib/utils";
+import { formatDate, toNormalCase } from "@/lib/utils";
 import type { Component, Newsletter } from "@prisma/client";
 import {
   Calendar,
@@ -39,6 +39,8 @@ export function NewsletterCard({
   deleteNewsletter,
   toggleActive,
 }: Props) {
+  const componentCount = newsletter.components.length;
+
   return (
     <Card className='overflow-hidden pb-0 transition-shadow hover:shadow-md'>
       <CardHeader className='pb-2'>
@@ -62,17 +64,8 @@ export function NewsletterCard({
               <DropdownMenuItem
                 onClick={() => toggleActive(newsletter.id, newsletter.active)}
               >
-                {newsletter.active ? (
-                  <>
-                    <Clock className='mr-2 h-4 w-4' />
-                    Deactivate
-                  </>
-                ) : (
-                  <>
-                    <Clock className='mr-2 h-4 w-4' />
-                    Activate
-                  </>
-                )}
+                <Clock className='mr-2 h-4 w-4' />
+                {newsletter.active ? "Deactivate" : "Activate"}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -109,12 +102,10 @@ export function NewsletterCard({
                 Inactive
               </Badge>
             )}
-            {newsletter.components.length > 0 && (
+            {componentCount > 0 && (
               <Badge variant='secondary'>
-                {newsletter.components.length}{" "}
-                {newsletter.components.length === 1
-                  ? "Component"
-                  : "Components"}
+                {componentCount}{" "}
+                {componentCount === 1 ? "Component" : "Components"}
               </Badge>
             )}
           </div>
@@ -122,13 +113,7 @@ export function NewsletterCard({
       </CardContent>
       <CardFooter className='bg-muted/30 border-t px-6 py-3'>
         <div className='text-muted-foreground flex w-full items-center justify-between text-xs'>
-          <span>Created {formatDate2(newsletter.createdAt)}</span>
-          {/* <Link
-            href={`/main/newsletter/stats/${newsletter.id}`}
-            className='text-primary hover:underline'
-          >
-            View Stats
-          </Link> */}
+          <span>Created {formatDate(newsletter.createdAt)}</span>
         </div>
       </CardFooter>
     </Card>
