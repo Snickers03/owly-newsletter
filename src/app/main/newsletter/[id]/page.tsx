@@ -3,6 +3,7 @@
 import { use } from "react";
 import Link from "next/link";
 import { useUserStore } from "@/store/user-store";
+import { INewsletterComponent } from "@/types";
 import {
   Component,
   CryptoParams,
@@ -14,7 +15,6 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/main-layout";
-import { NewsletterComponent } from "@/components/newsletter/create/newsletter-creator";
 import { NewsletterPreview } from "@/components/newsletter/create/newsletter-preview";
 import { NewsletterNotFound } from "@/components/newsletter/view/newsletter-not-found";
 import { trpc } from "@/app/_trpc/client";
@@ -96,7 +96,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
   function transformComponents(
     components: ExtendedComponent[],
-  ): NewsletterComponent[] {
+  ): INewsletterComponent[] {
     return components.map((component) => {
       if (component.type === "crypto" && component?.crypto) {
         return {
@@ -137,7 +137,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     });
   }
 
-  const transformedComponents: NewsletterComponent[] =
+  const transformedComponents: INewsletterComponent[] =
     transformComponents(newsletter?.components ?? []) ?? [];
 
   if (!newsletter) return <NewsletterNotFound />;

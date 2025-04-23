@@ -60,9 +60,9 @@ interface NewsletterComponentCardProps {
   initialEditMode?: boolean;
 }
 
-const cryptocurrencies = cryptosPreviewData.map((crypto) => ({
-  label: crypto.name,
-  value: crypto.symbol,
+const cryptocurrencies = cryptosPreviewData.map(({ name, symbol }) => ({
+  label: name,
+  value: symbol,
 }));
 
 export function NewsletterComponentCard({
@@ -101,40 +101,38 @@ export function NewsletterComponentCard({
   const style = { transform: CSS.Transform.toString(transform), transition };
 
   const validateInput = () => {
-    if (component.type === "weather" && !city.trim()) {
-      setError("Please enter a city name");
-      return false;
-    }
-    if (component.type === "crypto" && currencies.length === 0) {
-      setError("Please select at least one cryptocurrency");
-      return false;
-    }
+    if (component.type === "weather" && !city.trim())
+      return setError("Please enter a city name"), false;
+    if (component.type === "crypto" && currencies.length === 0)
+      return setError("Please select at least one cryptocurrency"), false;
     setError("");
     return true;
   };
 
   const handleSave = () => {
     if (!validateInput()) return;
-    if (component.type === "weather") onUpdate(component.id, { city });
-    else if (component.type === "crypto")
-      onUpdate(component.id, { currencies });
-    else if (component.type === "quote") {
-      const { quote, author } = quotesPreviewData[quoteId];
-      onUpdate(component.id, { quote, author, quoteId });
-    }
+    const updateParams =
+      component.type === "weather"
+        ? { city }
+        : component.type === "crypto"
+          ? { currencies }
+          : (() => {
+              const { quote, author } = quotesPreviewData[quoteId];
+              return { quote, author, quoteId };
+            })();
+    onUpdate(component.id, updateParams);
     setIsEditing(false);
   };
 
   const handleKeyDown = (
     e: KeyboardEvent<HTMLInputElement | HTMLButtonElement>,
   ) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSave();
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      component.isNew ? onRemove(component.id) : setIsEditing(false);
-    }
+    if (e.key === "Enter") return e.preventDefault(), handleSave();
+    if (e.key === "Escape")
+      return (
+        e.preventDefault(),
+        component.isNew ? onRemove(component.id) : setIsEditing(false)
+      );
   };
 
   const toggleCurrency = (value: string) => {
@@ -145,11 +143,10 @@ export function NewsletterComponentCard({
   };
 
   const getNewRandomQuote = () => {
-    let newQuoteId;
-    do {
-      newQuoteId = Math.floor(Math.random() * quotesPreviewData.length);
-    } while (newQuoteId === quoteId && quotesPreviewData.length > 1);
-    setQuoteId(newQuoteId);
+    let newId;
+    do newId = Math.floor(Math.random() * quotesPreviewData.length);
+    while (newId === quoteId && quotesPreviewData.length > 1);
+    setQuoteId(newId);
   };
 
   const currentQuote = quotesPreviewData[quoteId];
@@ -296,7 +293,7 @@ export function NewsletterComponentCard({
                               value={crypto.value}
                               onSelect={() => {
                                 toggleCurrency(crypto.value);
-                                setOpen(true); // Keep open after selection
+                                setOpen(true);
                               }}
                             >
                               <Check
@@ -350,7 +347,6 @@ export function NewsletterComponentCard({
                 <span className='font-medium'>{component.params.city}</span>
               </p>
             )}
-
             {component.type === "crypto" && (
               <p>
                 Price of{" "}
@@ -362,7 +358,6 @@ export function NewsletterComponentCard({
                 </span>
               </p>
             )}
-
             {component.type === "quote" && (
               <blockquote className='text-muted-foreground italic'>
                 "{component.params.quote || currentQuote.quote}"
@@ -381,13 +376,9 @@ export function NewsletterComponentCard({
           <Button
             variant='outline'
             size='sm'
-            onClick={() => {
-              if (component.isNew) {
-                onRemove(component.id);
-              } else {
-                setIsEditing(false);
-              }
-            }}
+            onClick={() =>
+              component.isNew ? onRemove(component.id) : setIsEditing(false)
+            }
           >
             Cancel
           </Button>

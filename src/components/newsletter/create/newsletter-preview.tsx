@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { toNormalCase } from "@/lib/utils";
+import { INewsletterComponent } from "@/types";
 import { cryptosPreviewData } from "@/utils/crypto.data";
 import { quotesPreviewData } from "@/utils/quotes.data";
 import { Calendar, Clock, Mail } from "lucide-react";
@@ -10,12 +11,11 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import type { NewsletterComponent } from "@/components/newsletter/create/newsletter-creator";
 
 interface NewsletterPreviewProps {
   title: string;
   token: string;
-  components: NewsletterComponent[];
+  components: INewsletterComponent[];
   interval: string;
   time: string;
 }
