@@ -1,4 +1,4 @@
-export const quotes = [
+export const quotesPreviewData = [
   {
     quote: "Be yourself; everyone else is already taken.",
     author: "Oscar Wilde",

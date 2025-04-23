@@ -44,7 +44,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         return {
           type: "crypto",
           params: {
-            currency: component.crypto.currency,
+            currencies: component.crypto.currencies.split(","),
           },
         };
       }
@@ -70,6 +70,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         title: newsletter.title,
         interval: newsletter.interval,
         time: newsletter.time,
+        // TODO: weird bug
         components: componentsParams ?? [],
       });
     }
@@ -91,7 +92,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           type: "crypto",
           isNew: false,
           params: {
-            currency: component.crypto.currency,
+            currencies: component.crypto.currencies.split(","),
           },
         };
       }

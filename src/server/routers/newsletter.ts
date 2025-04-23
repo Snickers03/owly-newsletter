@@ -59,9 +59,10 @@ export const newsletterRouter = router({
             params: z
               .object({
                 city: z.string().optional(),
-                currency: z.string().optional(),
+                currencies: z.array(z.string()).optional(),
                 quote: z.string().optional(),
                 author: z.string().optional(),
+                quoteId: z.number().optional(),
               })
               .optional(),
           }),
@@ -91,7 +92,9 @@ export const newsletterRouter = router({
               ...(comp.type === "crypto" && {
                 crypto: {
                   create: {
-                    currency: comp.params?.currency ?? "",
+                    currencies: comp.params?.currencies?.length
+                      ? comp.params.currencies.join(",")
+                      : "",
                   },
                 },
               }),
@@ -108,6 +111,7 @@ export const newsletterRouter = router({
         },
       });
     }),
+
   delete: publicProcedure.input(z.string()).mutation(async (opts) => {
     return await prisma.newsletter.delete({
       where: {
@@ -130,6 +134,7 @@ export const newsletterRouter = router({
               .object({
                 city: z.string().optional(),
                 currency: z.string().optional(),
+                currencies: z.array(z.string()).optional(),
                 quote: z.string().optional(),
                 author: z.string().optional(),
               })
@@ -156,20 +161,13 @@ export const newsletterRouter = router({
         };
       }
 
-      const cryptoComponentsCurrencies = input.components
+      const currenciesSymbols = input.components
         .filter((component) => component.type === "crypto")
-        .map((component) => {
-          const currency = component.params?.currency;
-          // TODO: safe symbol instead of name in db
-          if (currency?.toLowerCase() === "bitcoin") return "BTC";
-          if (currency?.toLowerCase() === "ethereum") return "ETH";
-          return currency;
-        })
-        .filter((currency): currency is string => !!currency);
-      let cryptoInfo = null;
-      if (cryptoComponentsCurrencies.length > 0) {
-        cryptoInfo = await fetchCryptoData(cryptoComponentsCurrencies);
-      }
+        .map((component) => component.params?.currencies)
+        .flat()
+        .filter((currency) => currency !== undefined && currency !== null);
+
+      const cryptoInfos = await fetchCryptoData(currenciesSymbols);
 
       return await resend.emails.send({
         from: "Niklas <clubverse@niklas.sh>",
@@ -179,7 +177,7 @@ export const newsletterRouter = router({
           title: input.title,
           time: input.time,
           interval: input.interval,
-          cryptoInfo: cryptoInfo,
+          cryptoInfo: cryptoInfos,
           weatherInfo: weatherInfo,
           token: input.token,
         }),

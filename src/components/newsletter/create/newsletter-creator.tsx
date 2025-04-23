@@ -4,14 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { timeOptions } from "@/lib/newsletter.utils";
 import { useUserStore } from "@/store/user-store";
-import { IComponentType } from "@/types";
+import type { IComponentType } from "@/types";
 import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { IntervalType } from "@prisma/client";
+import type { IntervalType } from "@prisma/client";
 import { PlusCircle, Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,10 @@ export type NewsletterComponent = {
   params: {
     city?: string;
     currency?: string;
+    currencies?: string[];
     quote?: string;
+    author?: string;
+    quoteId?: number;
   };
   isNew?: boolean;
 };
@@ -87,7 +90,13 @@ export function NewsletterCreator() {
 
   const handleUpdateComponent = (
     id: string,
-    params: { city?: string; currency?: string },
+    params: {
+      city?: string;
+      currencies?: string[];
+      quote?: string;
+      author?: string;
+      quoteId?: number;
+    },
   ) => {
     setComponents(
       components.map((component) =>

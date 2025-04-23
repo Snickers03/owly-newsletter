@@ -29,3 +29,10 @@ export const formatDate2 = (date: Date | null): string => {
 export const numberToTemperature = (temp: number): string => {
   return `${String(temp).replace(".", ",")}°C`;
 };
+
+export function parseCurrencies(
+  currenciesString: string | null | undefined,
+): string[] {
+  if (!currenciesString) return [];
+  return currenciesString.split(",").filter(Boolean);
+}

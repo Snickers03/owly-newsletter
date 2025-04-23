@@ -103,7 +103,7 @@ model WeatherParams {
 
 model CryptoParams {
   id          String    @id @default(uuid())
-  currency    String
+  currencies  String
   component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
   componentId String    @unique
 }
