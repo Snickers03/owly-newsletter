@@ -43,11 +43,13 @@ export const NewsletterCreator = () => {
   const userId = user?.id;
   const router = useRouter();
 
-  const { mutate: createNewsletter } = trpc.newsletter.create.useMutation({
-    onSuccess: (newsletter) => router.push(`${APP_MAIN_PAGE}/${newsletter.id}`),
-    onError: () =>
-      toast.error("Error creating newsletter. Please try again later."),
-  });
+  const { mutate: createNewsletter, isPending } =
+    trpc.newsletter.create.useMutation({
+      onSuccess: (newsletter) =>
+        router.push(`${APP_MAIN_PAGE}/${newsletter.id}`),
+      onError: () =>
+        toast.error("Error creating newsletter. Please try again later."),
+    });
 
   const [title, setTitle] = useState("");
   const [interval, setInterval] = useState("weekly");
