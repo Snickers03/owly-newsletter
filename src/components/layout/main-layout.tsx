@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { toNormalCase } from "@/lib/utils";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { trpc } from "@/app/_trpc/client";
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,6 +18,13 @@ export default function MainLayout({ children }: LayoutProps) {
   const relevantPaths = pathParts.filter(
     (part) => part !== "" && part !== "main",
   );
+
+  const newsletterId = relevantPaths[1];
+
+  const { data: newsletterName, isPending } =
+    trpc.newsletter.getNameById.useQuery(newsletterId, {
+      enabled: !!newsletterId,
+    });
 
   return (
     <div className='flex min-h-screen w-full flex-col'>
@@ -30,7 +38,9 @@ export default function MainLayout({ children }: LayoutProps) {
               <div key={part} className='flex items-center gap-2'>
                 {isLastPart ? (
                   <span className='text-primary text-sm font-medium'>
-                    {toNormalCase(part)}
+                    {isPending && newsletterId
+                      ? "Loading..."
+                      : (newsletterName ?? toNormalCase(part))}{" "}
                   </span>
                 ) : (
                   <>

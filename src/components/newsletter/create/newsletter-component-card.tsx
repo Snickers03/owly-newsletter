@@ -54,7 +54,6 @@ interface NewsletterComponentCardProps {
       currencies?: string[];
       quote?: string;
       author?: string;
-      quoteId?: number;
     },
   ) => void;
   initialEditMode?: boolean;
@@ -77,8 +76,7 @@ export function NewsletterComponentCard({
     component.params.currencies || [],
   );
   const [quoteId, setQuoteId] = useState<number>(
-    component.params.quoteId ??
-      Math.floor(Math.random() * quotesPreviewData.length),
+    Math.floor(Math.random() * quotesPreviewData.length),
   );
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
@@ -118,7 +116,7 @@ export function NewsletterComponentCard({
           ? { currencies }
           : (() => {
               const { quote, author } = quotesPreviewData[quoteId];
-              return { quote, author, quoteId };
+              return { quote, author };
             })();
     onUpdate(component.id, updateParams);
     setIsEditing(false);

@@ -2,14 +2,12 @@
 
 import { use } from "react";
 import Link from "next/link";
+import {
+  extractComponentParams,
+  transformComponents,
+} from "@/lib/components.utils";
 import { useUserStore } from "@/store/user-store";
 import { INewsletterComponent } from "@/types";
-import {
-  Component,
-  CryptoParams,
-  QuoteParams,
-  WeatherParams,
-} from "@prisma/client";
 import { ArrowLeft, Send } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,101 +37,16 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   );
 
   function handleSendNewsletter() {
-    // extract components params
-    const componentsParams = newsletter?.components.map((component) => {
-      if (component.type === "crypto" && component.crypto) {
-        return {
-          type: "crypto",
-          params: {
-            currencies: component.crypto.currencies.split(","),
-          },
-          order: component.order,
-        };
-      }
+    if (!newsletter) return;
+    const componentsParams = extractComponentParams(newsletter.components);
 
-      if (component.type === "weather" && component.weather) {
-        return {
-          type: "weather",
-          params: {
-            city: component.weather.city,
-          },
-          order: component.order,
-        };
-      }
-      if (component.type === "quote" && component.quote) {
-        return {
-          type: "quote",
-          params: {
-            quote: component.quote.quote,
-            author: component.quote.author,
-          },
-          order: component.order,
-        };
-      }
-
-      throw new Error(
-        `Unknown or incomplete component: ${JSON.stringify(component)}`,
-      );
-    });
-
-    if (newsletter) {
-      sendNewsletter({
-        userEmail: user?.email ?? null,
-        token: newsletter.token,
-        title: newsletter.title,
-        interval: newsletter.interval,
-        time: newsletter.time,
-        components: componentsParams ?? [],
-      });
-    }
-  }
-
-  interface ExtendedComponent extends Component {
-    crypto?: CryptoParams | null;
-    weather?: WeatherParams | null;
-    quote?: QuoteParams | null;
-  }
-
-  function transformComponents(
-    components: ExtendedComponent[],
-  ): INewsletterComponent[] {
-    return components.map((component) => {
-      if (component.type === "crypto" && component?.crypto) {
-        return {
-          id: component.id,
-          type: "crypto",
-          isNew: false,
-          params: {
-            currencies: component.crypto.currencies.split(","),
-          },
-        };
-      }
-
-      if (component.type === "weather" && component.weather) {
-        return {
-          id: component.id,
-          type: "weather",
-          isNew: false,
-          params: {
-            city: component.weather.city,
-          },
-        };
-      }
-      if (component.type === "quote" && component.quote) {
-        return {
-          id: component.id,
-          type: "quote",
-          isNew: false,
-          params: {
-            quote: component.quote.quote,
-            author: component.quote.author,
-          },
-        };
-      }
-
-      throw new Error(
-        `Unknown or incomplete component: ${JSON.stringify(component)}`,
-      );
+    sendNewsletter({
+      userEmail: user?.email ?? null,
+      token: newsletter.token,
+      title: newsletter.title,
+      interval: newsletter.interval,
+      time: newsletter.time,
+      components: componentsParams,
     });
   }
 

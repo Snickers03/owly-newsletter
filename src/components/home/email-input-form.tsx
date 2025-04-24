@@ -9,7 +9,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BorderBeam } from "@/components/magicui/border-beam";
+import { BorderBeam } from "@/components/ui/magicui/border-beam";
 
 const emailSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

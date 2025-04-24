@@ -5,7 +5,6 @@ export type IComponentParams = {
   currencies?: string[];
   quote?: string;
   author?: string;
-  quoteId?: number;
 };
 
 export type INewsletterComponent = {

@@ -62,7 +62,6 @@ export const newsletterRouter = router({
                 currencies: z.array(z.string()).optional(),
                 quote: z.string().optional(),
                 author: z.string().optional(),
-                quoteId: z.number().optional(),
               })
               .optional(),
           }),
@@ -70,39 +69,39 @@ export const newsletterRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const { title, userId, interval, time, components } = input;
+      const { userId, title, interval, time, components } = input;
 
       return await prisma.newsletter.create({
         data: {
-          title: title,
           userId: userId,
+          title: title,
           interval: interval,
           time: time,
           components: {
-            create: components.map((comp, index) => ({
-              type: comp.type,
+            create: components.map((c, index) => ({
+              type: c.type,
               order: index,
-              ...(comp.type === "weather" && {
+              ...(c.type === "weather" && {
                 weather: {
                   create: {
-                    city: comp.params?.city ?? "",
+                    city: c.params?.city ?? "",
                   },
                 },
               }),
-              ...(comp.type === "crypto" && {
+              ...(c.type === "crypto" && {
                 crypto: {
                   create: {
-                    currencies: comp.params?.currencies?.length
-                      ? comp.params.currencies.join(",")
+                    currencies: c.params?.currencies?.length
+                      ? c.params.currencies.join(",")
                       : "",
                   },
                 },
               }),
-              ...(comp.type === "quote" && {
+              ...(c.type === "quote" && {
                 quote: {
                   create: {
-                    quote: comp.params?.quote ?? "",
-                    author: comp.params?.author ?? "Unknown",
+                    quote: c.params?.quote ?? "",
+                    author: c.params?.author ?? "",
                   },
                 },
               }),
@@ -123,10 +122,10 @@ export const newsletterRouter = router({
     .input(
       z.object({
         userEmail: z.string().nullable(),
-        token: z.string(),
         title: z.string(),
         interval: z.string(),
         time: z.string(),
+        token: z.string(),
         components: z.array(
           z.object({
             type: z.string(),
@@ -268,5 +267,16 @@ export const newsletterRouter = router({
       throw new Error("Invalid token");
     }
     return newsletter;
+  }),
+  getNameById: publicProcedure.input(z.string()).query(async (opts) => {
+    const newsletter = await prisma.newsletter.findUnique({
+      where: {
+        id: opts.input,
+      },
+    });
+    if (!newsletter) {
+      throw new Error("Newsletter not found");
+    }
+    return newsletter.title;
   }),
 });
