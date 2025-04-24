@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { APP_MAIN_PAGE } from "@/config";
 import { timeOptions } from "@/lib/utils";
 import { useUserStore } from "@/store/user-store";
 import type {
@@ -43,7 +44,7 @@ export const NewsletterCreator = () => {
   const router = useRouter();
 
   const { mutate: createNewsletter } = trpc.newsletter.create.useMutation({
-    onSuccess: () => router.push("/main/newsletter"),
+    onSuccess: (newsletter) => router.push(`${APP_MAIN_PAGE}/${newsletter.id}`),
     onError: () =>
       toast.error("Error creating newsletter. Please try again later."),
   });

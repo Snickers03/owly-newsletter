@@ -78,6 +78,7 @@ export function ProfileTab({ user, closeDialog }: ProfileTabProps) {
   };
 
   const handleVerifyEmail = () => {
+    // TODO: Implement email verification logic
     console.log("Sending verification email to:", user.email);
     setVerificationSent(true);
   };

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { APP_MAIN_PAGE } from "@/config";
 import { useUserStore } from "@/store/user-store";
 import { PlusCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -39,7 +40,7 @@ export default function Page() {
             Manage and monitor all your newsletter.
           </p>
         </div>
-        <Link href='/main/newsletter/create'>
+        <Link href={`${APP_MAIN_PAGE}/create`}>
           <Button>
             <PlusCircle className='mr-2 h-4 w-4' />
             Create Newsletter

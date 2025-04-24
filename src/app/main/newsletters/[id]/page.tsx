@@ -2,6 +2,7 @@
 
 import { use } from "react";
 import Link from "next/link";
+import { APP_MAIN_PAGE } from "@/config";
 import {
   extractComponentParams,
   transformComponents,
@@ -21,7 +22,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const user = useUserStore((state) => state.user);
 
-  const { data: newsletter } = trpc.newsletter.getById.useQuery(id, {
+  const { data: newsletter, isError } = trpc.newsletter.getById.useQuery(id, {
     enabled: !!id,
   });
 
@@ -56,7 +57,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   if (!newsletter) return <NewsletterNotFound />;
 
   return (
-    <MainLayout>
+    <MainLayout newsletterTitle={newsletter.title}>
       <header className='flex items-start justify-between'>
         <div>
           <h1 className='mb-2 text-3xl font-bold'>View Newsletter</h1>
@@ -64,7 +65,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             View your newsletter before sending it out.
           </p>
         </div>
-        <Link href='/main/newsletter'>
+        <Link href={APP_MAIN_PAGE}>
           <Button variant='ghost' size='sm' className='gap-1'>
             <ArrowLeft className='h-4 w-4' />
             Back to Newsletters

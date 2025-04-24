@@ -22,21 +22,11 @@ import { AppSidebarUser } from "./app-sidebar-user/app-sidebar-user";
 
 const navigationItems = [
   {
-    title: "Newsletter",
+    title: "Newsletters",
     icon: Newspaper,
     href: APP_MAIN_PAGE,
     isActive: true,
   },
-  // {
-  //   title: "Analytics",
-  //   icon: BarChart3,
-  //   href: "/main/analytics",
-  // },
-  // {
-  //   title: "Settings",
-  //   icon: Settings,
-  //   href: "/main/settings",
-  // },
 ];
 
 export function AppSidebar() {

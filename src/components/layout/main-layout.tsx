@@ -1,30 +1,23 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { toNormalCase } from "@/lib/utils";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { trpc } from "@/app/_trpc/client";
 
 interface LayoutProps {
   children: ReactNode;
+  newsletterTitle?: string;
 }
 
-export default function MainLayout({ children }: LayoutProps) {
+export default function MainLayout({ children, newsletterTitle }: LayoutProps) {
   const pathname = usePathname();
-  const pathParts = pathname.split("/");
-  const relevantPaths = pathParts.filter(
-    (part) => part !== "" && part !== "main",
-  );
 
-  const newsletterId = relevantPaths[1];
-
-  const { data: newsletterName, isPending } =
-    trpc.newsletter.getNameById.useQuery(newsletterId, {
-      enabled: !!newsletterId,
-    });
+  const relevantPaths = useMemo(() => {
+    return pathname.split("/").filter((part) => part && part !== "main");
+  }, [pathname]);
 
   return (
     <div className='flex min-h-screen w-full flex-col'>
@@ -32,15 +25,16 @@ export default function MainLayout({ children }: LayoutProps) {
         <div className='flex h-14 items-center gap-4 px-4'>
           <SidebarTrigger />
           {relevantPaths.map((part, index) => {
-            const isLastPart = index === relevantPaths.length - 1;
+            const isLast = index === relevantPaths.length - 1;
             const href = `/main/${relevantPaths.slice(0, index + 1).join("/")}`;
+            const displayName =
+              isLast && newsletterTitle ? newsletterTitle : toNormalCase(part);
+
             return (
               <div key={part} className='flex items-center gap-2'>
-                {isLastPart ? (
+                {isLast ? (
                   <span className='text-primary text-sm font-medium'>
-                    {isPending && newsletterId
-                      ? "Loading..."
-                      : (newsletterName ?? toNormalCase(part))}{" "}
+                    {newsletterTitle ?? displayName}
                   </span>
                 ) : (
                   <>
@@ -48,9 +42,7 @@ export default function MainLayout({ children }: LayoutProps) {
                       href={href}
                       className='text-muted-foreground text-sm font-medium hover:cursor-pointer hover:underline'
                     >
-                      {part
-                        .replace(/-/g, " ")
-                        .replace(/^\w/, (c) => c.toUpperCase())}
+                      {toNormalCase(part)}
                     </Link>
                     <span>/</span>
                   </>

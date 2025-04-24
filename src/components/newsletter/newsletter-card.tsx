@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { APP_MAIN_PAGE } from "@/config";
 import { formatDate, toNormalCase } from "@/lib/utils";
 import type { Component, Newsletter } from "@prisma/client";
 import {
@@ -55,7 +56,7 @@ export function NewsletterCard({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <Link href={`/main/newsletter/${newsletter.id}`}>
+              <Link href={`${APP_MAIN_PAGE}/${newsletter.id}`}>
                 <DropdownMenuItem>
                   <Newspaper className='mr-2 h-4 w-4' />
                   View
