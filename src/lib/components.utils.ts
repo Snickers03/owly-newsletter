@@ -6,21 +6,44 @@ import {
   WeatherParams,
 } from "@prisma/client";
 
+// Typdefinitionen für die einzelnen Komponententypen
+export interface CryptoParamsType {
+  currencies: string[];
+}
+
+export interface WeatherParamsType {
+  city: string;
+}
+
+export interface QuoteParamsType {
+  quote: string;
+  author: string;
+}
+
+// Union-Typ für alle möglichen Parameter
+export type ComponentParams =
+  | CryptoParamsType
+  | WeatherParamsType
+  | QuoteParamsType;
+
+// Erweiterter Component-Typ
 type ExtendedComponent = Component & {
   crypto?: CryptoParams | null;
   weather?: WeatherParams | null;
   quote?: QuoteParams | null;
 };
 
+// Typ für extrahierte Komponenten mit Parametern und Reihenfolge
 export interface NewsletterComponentParam {
   type: IComponentType;
-  params: Record<string, any>;
+  params: ComponentParams;
   order: number;
 }
 
+// Hilfsfunktion zur Extraktion der Parameter aus einer Komponente
 function getComponentParams(component: ExtendedComponent): {
   type: IComponentType;
-  params: Record<string, any>;
+  params: ComponentParams;
 } {
   if (component.type === "crypto" && component.crypto) {
     return {
@@ -55,6 +78,7 @@ function getComponentParams(component: ExtendedComponent): {
   );
 }
 
+// Extraktion der Parameter mit Reihenfolge für interne Verarbeitung
 export function extractComponentParams(
   components: ExtendedComponent[],
 ): NewsletterComponentParam[] {
@@ -67,6 +91,7 @@ export function extractComponentParams(
   });
 }
 
+// Transformation zu INewsletterComponent-Objekten
 export function transformComponents(
   components: ExtendedComponent[],
 ): INewsletterComponent[] {
