@@ -9,7 +9,7 @@ import {
 } from "@/lib/components.utils";
 import { useUserStore } from "@/store/user-store";
 import { INewsletterComponent } from "@/types";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Loader2, Send } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -26,16 +26,15 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     enabled: !!id,
   });
 
-  const { mutate: sendNewsletter } = trpc.newsletter.sendNewsletter.useMutation(
-    {
+  const { mutate: sendNewsletter, isPending } =
+    trpc.newsletter.sendNewsletter.useMutation({
       onSuccess: () => {
         toast.success("Newsletter sent successfully!");
       },
       onError: (error) => {
         console.error("Error sending newsletter: ", error);
       },
-    },
-  );
+    });
 
   function handleSendNewsletter() {
     if (!newsletter) return;
@@ -76,9 +75,18 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         onClick={handleSendNewsletter}
         className='mb-3 flex items-center justify-end'
       >
-        <Button>
-          Send Newsletter
-          <Send className='h-4 w-4' />
+        <Button disabled={isPending}>
+          {isPending ? (
+            <>
+              <Loader2 className='h-4 w-4 animate-spin' />
+              Sending...
+            </>
+          ) : (
+            <>
+              Send Newsletter
+              <Send className='h-4 w-4' />
+            </>
+          )}
         </Button>
       </div>
       <NewsletterPreview

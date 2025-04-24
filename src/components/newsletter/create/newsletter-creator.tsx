@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { IntervalType } from "@prisma/client";
-import { PlusCircle, Save } from "lucide-react";
+import { Loader2, Plus, PlusCircle } from "lucide-react";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
 
@@ -45,10 +45,12 @@ export const NewsletterCreator = () => {
 
   const { mutate: createNewsletter, isPending } =
     trpc.newsletter.create.useMutation({
-      onSuccess: (newsletter) =>
-        router.push(`${APP_MAIN_PAGE}/${newsletter.id}`),
-      onError: () =>
-        toast.error("Error creating newsletter. Please try again later."),
+      onSuccess: (newsletter) => {
+        router.push(`${APP_MAIN_PAGE}/${newsletter.id}`);
+      },
+      onError: () => {
+        toast.error("Error creating newsletter. Please try again later.");
+      },
     });
 
   const [title, setTitle] = useState("");
@@ -224,9 +226,18 @@ export const NewsletterCreator = () => {
         </div>
 
         <div className='flex justify-end'>
-          <Button onClick={handleSave} disabled={!canSave}>
-            <Save className='mr-2 h-4 w-4' />
-            Save Newsletter
+          <Button onClick={handleSave} disabled={!canSave || isPending}>
+            {isPending ? (
+              <>
+                <Loader2 className='h-4 w-4 animate-spin' />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Plus className='h-4 w-4' />
+                Create
+              </>
+            )}
           </Button>
         </div>
       </div>
