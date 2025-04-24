@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 
 import AuthProvider from "@/components/providers/auth-provider";
 
-import { PostHogProvider } from "../components/PostHogProvider";
+import { PostHogProvider } from "../components/providers/posthog-provider";
 import TrpcProvider from "../components/providers/trpc-provider";
 
 import "./globals.css";
