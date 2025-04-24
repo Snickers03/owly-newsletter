@@ -4,8 +4,8 @@ import { generateRandomSixDigitNumber } from "@/lib/utils";
 import argon2 from "argon2";
 import { z } from "zod";
 
-import ResetPasswordTokenTemplate from "../../../emails/ResetPasswordTokenTemplate";
-import VerifyTokenTemplateEmail from "../../../emails/VerifyTokenTemplate";
+import ResetPasswordTemplate from "../../../emails/reset-password-template";
+import VerifyTokenTemplate from "../../../emails/verify-token-template";
 import { publicProcedure, router } from "../trpc";
 
 export const authRouter = router({
@@ -81,7 +81,7 @@ export const authRouter = router({
           from: "Niklas <clubverse@niklas.sh>",
           to: user.email,
           subject: "Verify your account",
-          react: VerifyTokenTemplateEmail({ token: user.verificationToken }),
+          react: VerifyTokenTemplate({ token: user.verificationToken }),
         });
 
         const extendedUser = { ...user, Session: session };
@@ -187,7 +187,7 @@ export const authRouter = router({
         from: "Niklas <clubverse@niklas.sh>",
         to: user.email,
         subject: "Verify your account",
-        react: VerifyTokenTemplateEmail({ token: newToken }),
+        react: VerifyTokenTemplate({ token: newToken }),
       });
 
       return { success: true };
@@ -218,7 +218,7 @@ export const authRouter = router({
         from: "Niklas <clubverse@niklas.sh>",
         to: user.email,
         subject: "Reset password token",
-        react: ResetPasswordTokenTemplate({ token: passwordResetToken }),
+        react: ResetPasswordTemplate({ token: passwordResetToken }),
       });
 
       return user;

@@ -17,7 +17,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-import { AuthHeader } from "../auth/auth-header";
+import { AuthHeader } from "../auth/layout/auth-header";
 import { AppSidebarUser } from "./app-sidebar-user/app-sidebar-user";
 
 const navigationItems = [

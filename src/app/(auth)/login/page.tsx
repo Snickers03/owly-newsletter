@@ -1,5 +1,5 @@
-import { AuthHeader } from "@/components/auth/auth-header";
-import { AuthImage } from "@/components/auth/auth-image";
+import { AuthHeader } from "@/components/auth/layout/auth-header";
+import { AuthImage } from "@/components/auth/layout/auth-image";
 import { LoginForm } from "@/components/auth/login-form";
 
 export default function LoginPage() {

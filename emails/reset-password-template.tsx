@@ -7,7 +7,7 @@ interface Props {
   username?: string;
 }
 
-export default function ResetPasswordTokenTemplate({
+export default function ResetPasswordTemplate({
   token = 123456,
   username,
 }: Props) {

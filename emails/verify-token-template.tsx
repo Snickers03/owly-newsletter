@@ -7,7 +7,7 @@ interface Props {
   username?: string;
 }
 
-export default function VerifyTokenTemplateEmail({
+export default function VerifyTokenTemplate({
   token = 123456,
   username = "there",
 }: Props) {
