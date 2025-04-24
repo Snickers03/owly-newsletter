@@ -22,7 +22,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const user = useUserStore((state) => state.user);
 
-  const { data: newsletter, isError } = trpc.newsletter.getById.useQuery(id, {
+  const { data: newsletter } = trpc.newsletter.getById.useQuery(id, {
     enabled: !!id,
   });
 
