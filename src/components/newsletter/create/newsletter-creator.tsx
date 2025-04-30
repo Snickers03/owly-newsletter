@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { IntervalType } from "@prisma/client";
-import { Loader2, Plus, PlusCircle } from "lucide-react";
+import { Loader2, PlusCircle, Save } from "lucide-react";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
 
@@ -234,8 +234,8 @@ export const NewsletterCreator = () => {
               </>
             ) : (
               <>
-                <Plus className='h-4 w-4' />
-                Create
+                <Save className='h-4 w-4' />
+                Create Newsletter
               </>
             )}
           </Button>

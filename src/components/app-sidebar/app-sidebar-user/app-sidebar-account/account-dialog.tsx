@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/app/_trpc/client";
 
 import { DeleteAccountDialog } from "./account-delete-dialog";
-import { ProfileTab } from "./app-sidebar-account-tabs/account-profile-tab";
+import { AccountProfileTab } from "./app-sidebar-account-tabs/account-profile-tab";
 import { SecurityTab } from "./app-sidebar-account-tabs/account-security-tab";
 
 interface AccountSettingsDialogProps {
@@ -75,7 +75,10 @@ export function AccountSettingsDialog({
 
             {/* Profile Tab */}
             <TabsContent value='profile'>
-              <ProfileTab user={user} closeDialog={() => onOpenChange(false)} />
+              <AccountProfileTab
+                user={user}
+                closeDialog={() => onOpenChange(false)}
+              />
             </TabsContent>
 
             {/* Security Tab */}

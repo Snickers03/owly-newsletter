@@ -14,6 +14,7 @@ import { BaseFormField } from "@/components/ui/project/base-form-field";
 interface VerificationStepProps {
   onSubmit: (token: string) => void;
   onBack: () => void;
+  onBackText?: string;
   onResend: () => void;
   email: string;
   cooldown: number;
@@ -23,6 +24,7 @@ interface VerificationStepProps {
 export function VerificationStep({
   onSubmit,
   onBack,
+  onBackText = "Back to Email",
   onResend,
   email,
   cooldown,
@@ -68,7 +70,7 @@ export function VerificationStep({
             className='flex w-full items-center justify-center gap-2'
             onClick={onBack}
           >
-            <ArrowLeft className='h-4 w-4' /> Back to Email
+            <ArrowLeft className='h-4 w-4' /> {onBackText}
           </Button>
         </div>
 
