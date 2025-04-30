@@ -58,7 +58,7 @@ export function AccountProfileTab({ user, closeDialog }: ProfileTabProps) {
     return name !== user.name || avatarUrl !== (user.avatarUrl || "");
   }, [name, avatarUrl, user.name, user.avatarUrl]);
 
-  const { mutate: updateProfile } = trpc.auth.updateProfile.useMutation({
+  const { mutate: updateProfile } = trpc.user.updateProfile.useMutation({
     onSuccess: (user) => {
       updateUser(user);
       closeDialog();

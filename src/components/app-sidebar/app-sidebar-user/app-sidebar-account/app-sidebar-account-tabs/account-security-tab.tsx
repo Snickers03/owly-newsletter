@@ -5,6 +5,7 @@ import { useUserStore } from "@/store/user-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -30,9 +31,10 @@ export function SecurityTab({ onDeleteAccount }: SecurityTabProps) {
   });
 
   const { mutate: changePassword, isPending } =
-    trpc.auth.changePassword.useMutation({
+    trpc.user.changePassword.useMutation({
       onSuccess: () => {
         form.reset();
+        toast.success("Password changed successfully");
       },
       onError: (error) => {
         if (error.message === "Invalid password") {
@@ -71,18 +73,21 @@ export function SecurityTab({ onDeleteAccount }: SecurityTabProps) {
               name='currentPassword'
               label='Current Password'
               type='password'
+              autoComplete='current-password'
             />
             <BaseFormField
               control={form.control}
               name='newPassword'
               label='New Password'
               type='password'
+              autoComplete='new-password'
             />
             <BaseFormField
               control={form.control}
               name='confirmPassword'
               label='Confirm New Password'
               type='password'
+              autoComplete='new-password'
             />
             <Button type='submit' className='w-full' disabled={isPending}>
               Change Password

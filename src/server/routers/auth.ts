@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { prisma } from "@/lib/prisma";
 import { resend } from "@/lib/resend";
 import { generateRandomSixDigitNumber } from "@/lib/utils";
@@ -8,323 +9,205 @@ import ResetPasswordTemplate from "../../../emails/reset-password-template";
 import VerifyTokenTemplate from "../../../emails/verify-token-template";
 import { publicProcedure, router } from "../trpc";
 
+const ERRORS = {
+  NOT_FOUND: "User not found.",
+  INVALID_CREDENTIALS: "Invalid credentials.",
+  ALREADY_VERIFIED: "Email already verified.",
+  GENERIC: "Something went wrong.",
+};
+
+async function findUserByEmail(email: string) {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error(ERRORS.NOT_FOUND);
+  return user;
+}
+
+async function createSessionFor(userId: string) {
+  return prisma.session.create({
+    data: {
+      userId,
+      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    },
+  });
+}
+
+async function sendTokenEmail(
+  email: string,
+  subject: string,
+  template: (opts: { token: number }) => JSX.Element,
+  token: number,
+) {
+  await resend.emails.send({
+    from: "Niklas <clubverse@niklas.sh>",
+    to: email,
+    subject,
+    react: template({ token }),
+  });
+}
+
+async function generateAndStoreToken(
+  userId: string,
+  field: "verificationToken" | "passwordResetToken",
+) {
+  const token = generateRandomSixDigitNumber();
+  await prisma.user.update({
+    where: { id: userId },
+    data: { [field]: token },
+  });
+  return token;
+}
+
 export const authRouter = router({
   login: publicProcedure
-    .input(z.object({ email: z.string(), password: z.string() }))
-    .mutation(async (opts) => {
-      const user = await prisma.user.findFirst({
-        where: {
-          email: opts.input.email,
-        },
-      });
-      if (!user) {
-        throw new Error("User not found.");
+    .input(z.object({ email: z.string().email(), password: z.string() }))
+    .mutation(async ({ input }) => {
+      const user = await findUserByEmail(input.email);
+      if (!(await argon2.verify(user.password, input.password))) {
+        throw new Error(ERRORS.INVALID_CREDENTIALS);
       }
-
-      const loginSuccess = await argon2.verify(
-        user.password,
-        opts.input.password,
-      );
-      if (!loginSuccess) {
-        throw new Error("Invalid password.");
-      }
-
-      const session = await prisma.session.create({
-        data: {
-          userId: user.id,
-          expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        },
-      });
-      const extendedUser = { ...user, Session: session };
-
-      return extendedUser;
+      const Session = await createSessionFor(user.id);
+      return { ...user, Session };
     }),
+
   signUp: publicProcedure
     .input(
       z.object({
-        name: z.string(),
-        email: z.string(),
-        password: z.string(),
+        name: z.string().min(1),
+        email: z.string().email(),
+        password: z.string().min(6),
       }),
     )
-    .mutation(async (opts) => {
-      // Check if user already exists
-      const existingUser = await prisma.user.findFirst({
-        where: {
-          email: opts.input.email,
+    .mutation(async ({ input }) => {
+      if (await prisma.user.count({ where: { email: input.email } })) {
+        throw new Error("Email already in use.");
+      }
+      const hash = await argon2.hash(input.password);
+      const user = await prisma.user.create({
+        data: {
+          name: input.name,
+          email: input.email,
+          password: hash,
+          verificationToken: 0,
         },
       });
 
-      if (existingUser) {
-        throw new Error("Email already in use");
-      }
+      const verificationToken = await generateAndStoreToken(
+        user.id,
+        "verificationToken",
+      );
+      await sendTokenEmail(
+        user.email,
+        "Verify your account",
+        VerifyTokenTemplate,
+        verificationToken,
+      );
 
-      const hash = await argon2.hash(opts.input.password);
-      try {
-        const user = await prisma.user.create({
-          data: {
-            name: opts.input.name,
-            email: opts.input.email,
-            password: hash,
-            verificationToken: generateRandomSixDigitNumber(),
-          },
-        });
-
-        const session = await prisma.session.create({
-          data: {
-            userId: user.id,
-            expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-          },
-        });
-
-        await resend.emails.send({
-          from: "Niklas <clubverse@niklas.sh>",
-          to: user.email,
-          subject: "Verify your account",
-          react: VerifyTokenTemplate({ token: user.verificationToken }),
-        });
-
-        const extendedUser = { ...user, Session: session };
-
-        return extendedUser;
-      } catch (error) {
-        console.error("SIGNUP ERROR: ", error);
-        throw new Error("Something went wrong.");
-      }
+      const Session = await createSessionFor(user.id);
+      return { ...user, Session };
     }),
-  loginWithToken: publicProcedure.input(z.string()).mutation(async (opts) => {
-    const session = await prisma.session.findFirst({
-      where: {
-        token: opts.input,
-        valid: true,
-      },
-    });
-    if (!session) {
-      throw new Error("Session not found.");
-    }
 
-    const user = await prisma.user.findFirst({
-      where: {
-        id: session.userId,
-      },
-    });
+  loginWithToken: publicProcedure
+    .input(z.string())
+    .mutation(async ({ input: token }) => {
+      const session = await prisma.session.findFirst({
+        where: { token, valid: true },
+      });
+      if (!session) throw new Error(ERRORS.NOT_FOUND);
 
-    if (!user) {
-      throw new Error("User not found.");
-    }
+      const user = await prisma.user.findUnique({
+        where: { id: session.userId },
+      });
+      if (!user) throw new Error(ERRORS.NOT_FOUND);
 
-    const extendedUser = { ...user, Session: session };
+      return { ...user, Session: session };
+    }),
 
-    return extendedUser;
-  }),
   invalidateSession: publicProcedure
     .input(z.string())
-    .mutation(async (opts) => {
-      const session = await prisma.session.update({
-        where: {
-          token: opts.input,
-        },
-        data: {
-          valid: false,
-        },
+    .mutation(async ({ input: token }) => {
+      return prisma.session.update({
+        where: { token },
+        data: { valid: false },
       });
-
-      return session;
     }),
+
   verifyEmail: publicProcedure
-    .input(z.object({ email: z.string(), token: z.number() }))
-    .mutation(async (opts) => {
+    .input(z.object({ email: z.string().email(), token: z.number() }))
+    .mutation(async ({ input }) => {
       const user = await prisma.user.findFirst({
         where: {
-          email: opts.input.email,
-          verificationToken: opts.input.token,
+          email: input.email,
+          verificationToken: input.token,
         },
       });
-      if (!user) {
-        throw new Error("Invalid verification token.");
-      }
+      if (!user) throw new Error("Invalid verification token.");
 
+      // mark verified and clear token
       await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          verified: true,
-        },
-      });
-
-      return user;
-    }),
-  resendVerificationToken: publicProcedure
-    .input(z.string())
-    .mutation(async (opts) => {
-      const user = await prisma.user.findFirst({
-        where: {
-          email: opts.input,
-        },
-      });
-
-      if (!user) {
-        throw new Error("User not found.");
-      }
-
-      if (user.verified) {
-        throw new Error("Email already verified.");
-      }
-
-      const newToken = generateRandomSixDigitNumber();
-
-      await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          verificationToken: newToken,
-        },
-      });
-
-      await resend.emails.send({
-        from: "Niklas <clubverse@niklas.sh>",
-        to: user.email,
-        subject: "Verify your account",
-        react: VerifyTokenTemplate({ token: newToken }),
+        where: { id: user.id },
+        data: { verified: true, verificationToken: undefined },
       });
 
       return { success: true };
     }),
 
+  resendVerificationToken: publicProcedure
+    .input(z.string().email())
+    .mutation(async ({ input: email }) => {
+      const user = await findUserByEmail(email);
+      if (user.verified) throw new Error(ERRORS.ALREADY_VERIFIED);
+
+      const newToken = await generateAndStoreToken(
+        user.id,
+        "verificationToken",
+      );
+      await sendTokenEmail(
+        user.email,
+        "Verify your account",
+        VerifyTokenTemplate,
+        newToken,
+      );
+      return { success: true };
+    }),
+
   createResetPasswordToken: publicProcedure
-    .input(z.string())
-    .mutation(async (opts) => {
-      const user = await prisma.user.findFirst({
-        where: {
-          email: opts.input,
-        },
-      });
-      if (!user) {
-        throw new Error("User not found.");
-      }
-
-      const { passwordResetToken } = await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          passwordResetToken: generateRandomSixDigitNumber(),
-        },
-      });
-
-      await resend.emails.send({
-        from: "Niklas <clubverse@niklas.sh>",
-        to: user.email,
-        subject: "Reset password token",
-        react: ResetPasswordTemplate({ token: passwordResetToken }),
-      });
-
-      return user;
+    .input(z.string().email())
+    .mutation(async ({ input: email }) => {
+      const user = await findUserByEmail(email);
+      const resetToken = await generateAndStoreToken(
+        user.id,
+        "passwordResetToken",
+      );
+      await sendTokenEmail(
+        user.email,
+        "Reset password token",
+        ResetPasswordTemplate,
+        resetToken,
+      );
+      return { success: true };
     }),
 
   verifyResetPasswordToken: publicProcedure
-    .input(z.object({ email: z.string(), token: z.number() }))
-    .mutation(async (opts) => {
+    .input(z.object({ email: z.string().email(), token: z.number() }))
+    .mutation(async ({ input }) => {
       const user = await prisma.user.findFirst({
         where: {
-          email: opts.input.email,
-          passwordResetToken: opts.input.token,
+          email: input.email,
+          passwordResetToken: input.token,
         },
       });
-      if (!user) {
-        throw new Error("Invalid reset password token.");
-      }
-
-      return null;
+      if (!user) throw new Error("Invalid reset password token.");
+      return { success: true };
     }),
+
   updatePassword: publicProcedure
-    .input(z.object({ email: z.string(), password: z.string() }))
-    .mutation(async (opts) => {
-      const hash = await argon2.hash(opts.input.password);
-      const user = await prisma.user.update({
-        where: {
-          email: opts.input.email,
-        },
-        data: {
-          password: hash,
-          passwordResetToken: 0,
-        },
+    .input(z.object({ email: z.string().email(), password: z.string().min(6) }))
+    .mutation(async ({ input }) => {
+      const hash = await argon2.hash(input.password);
+      await prisma.user.update({
+        where: { email: input.email },
+        data: { password: hash, passwordResetToken: undefined },
       });
-
-      return user;
-    }),
-  changePassword: publicProcedure
-    .input(
-      z.object({
-        email: z.string().nullable(),
-        currentPassword: z.string(),
-        newPassword: z.string(),
-      }),
-    )
-    .mutation(async (opts) => {
-      if (!opts.input.email) {
-        throw new Error("Email is required.");
-      }
-
-      const user = await prisma.user.findFirst({
-        where: {
-          email: opts.input.email,
-        },
-      });
-      if (!user) {
-        throw new Error("User not found.");
-      }
-
-      const loginSuccess = await argon2.verify(
-        user.password,
-        opts.input.currentPassword,
-      );
-      if (!loginSuccess) {
-        throw new Error("Invalid password");
-      }
-
-      const hash = await argon2.hash(opts.input.newPassword);
-      const updatedUser = await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          password: hash,
-        },
-      });
-
-      return updatedUser;
-    }),
-  updateProfile: publicProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        avatarUrl: z.string().nullable(),
-      }),
-    )
-    .mutation(async (opts) => {
-      const user = await prisma.user.findFirst({
-        where: {
-          id: opts.input.id,
-        },
-      });
-      if (!user) {
-        throw new Error("User not found.");
-      }
-
-      const updatedUser = await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          name: opts.input.name,
-          avatarUrl: opts.input.avatarUrl,
-        },
-      });
-
-      return updatedUser;
+      return { success: true };
     }),
 });

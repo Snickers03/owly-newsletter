@@ -72,6 +72,7 @@ export function LoginForm() {
             name='email'
             label='Email'
             placeholder='john.doe@gmail.com'
+            autoComplete='email'
           />
           <BaseFormField
             control={form.control}
@@ -79,6 +80,7 @@ export function LoginForm() {
             label='Password'
             type='password'
             placeholder='********'
+            autoComplete='password'
           />
           <Link
             href='/forgot-password'

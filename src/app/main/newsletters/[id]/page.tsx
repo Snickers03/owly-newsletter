@@ -6,7 +6,7 @@ import { APP_MAIN_PAGE } from "@/config";
 import {
   extractComponentParams,
   transformComponents,
-} from "@/lib/components.utils";
+} from "@/lib/utils/components.utils";
 import { useUserStore } from "@/store/user-store";
 import { INewsletterComponent } from "@/types";
 import { ArrowLeft, Loader2, Send } from "lucide-react";

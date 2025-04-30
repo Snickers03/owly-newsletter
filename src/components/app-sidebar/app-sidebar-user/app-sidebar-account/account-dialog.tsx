@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ExtendedUser } from "@/store/user-store";
+import { ExtendedUser, useUserStore } from "@/store/user-store";
 import { Shield, User } from "lucide-react";
 
 import {
@@ -30,12 +30,14 @@ export function AccountSettingsDialog({
   onOpenChange,
   user,
 }: AccountSettingsDialogProps) {
+  const logout = useUserStore((state) => state.logout);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const router = useRouter();
   const { mutate: deleteAccount } = trpc.user.delete.useMutation({
     onSuccess: () => {
       setDeleteConfirmationOpen(false);
       onOpenChange(false);
+      logout();
       router.push("/");
     },
     onError: () => {

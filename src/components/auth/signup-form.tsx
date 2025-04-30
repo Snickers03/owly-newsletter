@@ -123,12 +123,14 @@ export function SignupForm() {
                   name='name'
                   label='Name'
                   placeholder='John Doe'
+                  autoComplete='name'
                 />
                 <BaseFormField
                   control={form.control}
                   name='email'
                   label='Email'
                   placeholder='john.doe@gmail.com'
+                  autoComplete='email'
                 />
                 <BaseFormField
                   control={form.control}
@@ -136,6 +138,7 @@ export function SignupForm() {
                   label='Password'
                   type='password'
                   placeholder='********'
+                  autoComplete='new-password'
                 />
                 <BaseFormField
                   control={form.control}
@@ -143,6 +146,7 @@ export function SignupForm() {
                   label='Confirm Password'
                   type='password'
                   placeholder='********'
+                  autoComplete='new-password'
                 />
                 <Button type='submit' className='w-full' disabled={isSigningUp}>
                   {isSigningUp ? "Signing up..." : "Sign Up"}

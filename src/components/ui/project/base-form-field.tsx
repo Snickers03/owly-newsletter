@@ -16,6 +16,7 @@ interface Props<T extends FieldValues> {
   placeholder?: string;
   type?: string;
   className?: string;
+  autoComplete?: string;
 }
 
 export const BaseFormField = <T extends FieldValues>({
@@ -25,6 +26,7 @@ export const BaseFormField = <T extends FieldValues>({
   placeholder,
   type = "text",
   className,
+  autoComplete, // Destructure the new prop
 }: Props<T>) => {
   return (
     <FormField
@@ -39,7 +41,12 @@ export const BaseFormField = <T extends FieldValues>({
             </div>
           </div>
           <FormControl>
-            <Input type={type} placeholder={placeholder} {...field} />
+            <Input
+              type={type}
+              placeholder={placeholder}
+              autoComplete={autoComplete}
+              {...field}
+            />
           </FormControl>
         </FormItem>
       )}
