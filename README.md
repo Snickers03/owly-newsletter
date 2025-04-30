@@ -81,19 +81,13 @@
 
   <section id="getting-started" class="container">
     <h2>🎯 Getting Started</h2>
-    <pre><button class="copy-btn">Copy</button><code>git clone https://github.com/your-username/owly-newsletter.git
+    <pre><code>git clone https://github.com/snickers03/owly-newsletter.git
 cd owly-newsletter</code></pre>
     <pre><code>pnpm install</code></pre>
-    <pre><button class="copy-btn">Copy</button><code>cp .env.example .env.local</code></pre>
-    <pre><button class="copy-btn">Copy</button><code>npx prisma db push
-# npx prisma db seed</code></pre>
-    <pre><button class="copy-btn">Copy</button><code>npm run dev
-# or yarn dev
-# or pnpm dev</code></pre>
-  </section>
-
-  <section id="scripts-reference" class="container">
-    <h2>⚙️ Scripts Reference</h2>
+    <pre><code>cp .env.example .env.local</code></pre>
+    <pre><code>npx prisma db push</code></pre>
+    <pre><code>pnpm dev</code></pre>
+  </section>    <h2>⚙️ Scripts Reference</h2>
     <table>
       <tr><th>Command</th><th>Description</th></tr>
       <tr><td>dev</td><td>Start dev server with Turbopack</td></tr>
@@ -111,30 +105,10 @@ cd owly-newsletter</code></pre>
 
   <section id="environment-variables" class="container">
     <h2>🔐 Environment Variables</h2>
-    <pre><button class="copy-btn">Copy</button><code>### App
-NEXT_PUBLIC_BASE_URL=
-
-### Database
-
-DATABASE_URL=
-
-### Emails
-
-RESEND_API_KEY=
-
-### Uploads
-
-UPLOADTHING_TOKEN=
-
-### API KEYS
-
-COINMARKET_API_KEY=
-WEATHER_API_KEY=
-
-### Analytics
-
-NEXT_PUBLIC_POSTHOG_KEY=
-NEXT_PUBLIC_POSTHOG_HOST=</code></pre>
+    <pre>
+    NEXT_PUBLIC_BASE_URL=
+    DATABASE_URL=
+    </pre>
 
   </section>
 
