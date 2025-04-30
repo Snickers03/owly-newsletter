@@ -83,11 +83,8 @@
     <h2>🎯 Getting Started</h2>
     <pre><button class="copy-btn">Copy</button><code>git clone https://github.com/your-username/owly-newsletter.git
 cd owly-newsletter</code></pre>
-    <pre><button class="copy-btn">Copy</button><code>npm install
-# or yarn install
-# or pnpm install</code></pre>
-    <pre><button class="copy-btn">Copy</button><code>cp .env.example .env.local
-# then fill in your values</code></pre>
+    <pre><code>pnpm install</code></pre>
+    <pre><button class="copy-btn">Copy</button><code>cp .env.example .env.local</code></pre>
     <pre><button class="copy-btn">Copy</button><code>npx prisma db push
 # npx prisma db seed</code></pre>
     <pre><button class="copy-btn">Copy</button><code>npm run dev
