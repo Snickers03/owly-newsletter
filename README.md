@@ -1,131 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<body>
-  <div align="center">
-
 # 📬 Owly Newsletter
 
 **Create and schedule your very own custom newsletters with weather updates, crypto prices, and daily quotes.**
 
 [Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [Scripts](#️-scripts-reference) • [Environment Variables](#-environment-variables)
 
-</div>
-
 ## 🚀 Features
 
-<table>
-  <tr>
-    <td width="50%">
-      <h3>🌤️ Weather Forecasts</h3>
-      <p>Get current weather and forecasts from <a href="https://openweathermap.org/">OpenWeatherMap</a> (or your favorite API).</p>
-    </td>
-    <td width="50%">
-      <h3>💰 Crypto Prices</h3>
-      <p>Fetch real-time data for Bitcoin, Ethereum, and other top cryptocurrencies via CoinMarketCap.</p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <h3>💬 Daily Quotes</h3>
-      <p>Spice up your day with inspiring, funny, or thought-provoking quotes.</p>
-    </td>
-    <td width="50%">
-      <h3>⏱️ Custom Intervals</h3>
-      <p>Schedule newsletters hourly, daily, or weekly—tailor the frequency to your needs.</p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <h3>🔐 User Authentication</h3>
-      <p>Secure signup, login, and session management with Prisma and Argon2.</p>
-    </td>
-    <td width="50%">
-      <h3>🔄 Drag‑and-Drop Layout</h3>
-      <p>Use <code>@dnd-kit</code> to reorder modules (weather, crypto, quotes) with ease.</p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <h3>📧 Rich Templating</h3>
-      <p>Build email layouts with <code>@react-email/components</code> and send via Resend.</p>
-    </td>
-    <td width="50%">
-      <h3>📊 Analytics</h3>
-      <p>Track opens, clicks, and user behavior with PostHog.</p>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <h3>🖼️ Image Uploads</h3>
-      <p>Attach images to your newsletter modules using UploadThing.</p>
-    </td>
-  </tr>
-</table>
+|                                                                                                                                            |                                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| **🌤️ Weather Forecasts** <br> Get current weather and forecasts from [OpenWeatherMap](https://openweathermap.org/) (or your favorite API). | **💰 Crypto Prices** <br> Fetch real-time data for Bitcoin, Ethereum, and other top cryptocurrencies via CoinMarketCap. |
+| **💬 Daily Quotes** <br> Spice up your day with inspiring, funny, or thought-provoking quotes.                                             | **⏱️ Custom Intervals** <br> Schedule newsletters hourly, daily, or weekly—tailor the frequency to your needs.          |
+| **🔐 User Authentication** <br> Secure signup, login, and session management with Prisma and Argon2.                                       | **🔄 Drag‑and-Drop Layout** <br> Use `@dnd-kit` to reorder modules (weather, crypto, quotes) with ease.                 |
+| **📧 Rich Templating** <br> Build email layouts with `@react-email/components` and send via Resend.                                        | **📊 Analytics** <br> Track opens, clicks, and user behavior with PostHog.                                              |
+| **🖼️ Image Uploads** <br> Attach images to your newsletter modules using UploadThing.                                                      |                                                                                                                         |
 
-  <section id="tech-stack" class="container">
-    <h2>📦 Tech Stack</h2>
-    <table>
-      <tr><th>Area</th><th>Tools</th></tr>
-      <tr><td>Framework</td><td>Next.js 15 + Turbopack</td></tr>
-      <tr><td>Styling</td><td>Tailwind CSS + sonner, tw-animate-css</td></tr>
-      <tr><td>Forms</td><td>React Hook Form + Zod</td></tr>
-      <tr><td>State Mgmt</td><td>Zustand & React Query</td></tr>
-      <tr><td>Auth</td><td>tRPC + Prisma + Argon2</td></tr>
-      <tr><td>DB</td><td>PostgreSQL (NeonDB)</td></tr>
-      <tr><td>Email</td><td>React Email + Resend</td></tr>
-      <tr><td>API Clients</td><td>CoinMarketCap, OpenWeatherMap</td></tr>
-      <tr><td>Uploads</td><td>UploadThing + @uploadthing/react</td></tr>
-      <tr><td>Analytics</td><td>PostHog</td></tr>
-    </table>
-  </section>
+## 📦 Tech Stack
 
-  <section id="getting-started" class="container">
-    <h2>🎯 Getting Started</h2>
-    <pre><code>git clone https://github.com/snickers03/owly-newsletter.git
-cd owly-newsletter</code></pre>
-    <pre><code>pnpm install</code></pre>
-    <pre><code>cp .env.example .env.local</code></pre>
-    <pre><code>npx prisma db push</code></pre>
-    <pre><code>pnpm dev</code></pre>
-  </section>    <h2>⚙️ Scripts Reference</h2>
-    <table>
-      <tr><th>Command</th><th>Description</th></tr>
-      <tr><td>dev</td><td>Start dev server with Turbopack</td></tr>
-      <tr><td>build</td><td>Build for production</td></tr>
-      <tr><td>start</td><td>Start production server</td></tr>
-      <tr><td>lint</td><td>Run ESLint</td></tr>
-      <tr><td>test</td><td>Run Jest tests</td></tr>
-      <tr><td>test:watch</td><td>Run tests in watch mode</td></tr>
-      <tr><td>email:dev</td><td>Start React Email dev server</td></tr>
-      <tr><td>prisma:studio</td><td>Open Prisma Studio</td></tr>
-      <tr><td>prisma:generate</td><td>Generate Prisma client</td></tr>
-      <tr><td>prisma:push</td><td>Push schema changes</td></tr>
-    </table>
-  </section>
+| Area        | Tools                                 |
+| ----------- | ------------------------------------- |
+| Framework   | Next.js 15 + Turbopack                |
+| Styling     | Tailwind CSS + sonner, tw-animate-css |
+| Forms       | React Hook Form + Zod                 |
+| State Mgmt  | Zustand & React Query                 |
+| Auth        | tRPC + Prisma + Argon2                |
+| DB          | PostgreSQL (NeonDB)                   |
+| Email       | React Email + Resend                  |
+| API Clients | CoinMarketCap, OpenWeatherMap         |
+| Uploads     | UploadThing + @uploadthing/react      |
+| Analytics   | PostHog                               |
 
-  <section id="environment-variables" class="container">
-    <h2>🔐 Environment Variables</h2>
-    <pre>
-    NEXT_PUBLIC_BASE_URL=
-    DATABASE_URL=
-    </pre>
+## 🎯 Getting Started
 
-  </section>
+\`\`\`bash
+git clone https://github.com/snickers03/owly-newsletter.git
+cd owly-newsletter
+\`\`\`
 
-  <footer class="footer">
-    &copy; 2025 Owly Newsletter • MIT License
-  </footer>
+\`\`\`bash
+pnpm install
+\`\`\`
 
-  <script>
-    document.querySelectorAll('.copy-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const code = btn.nextElementSibling.textContent;
-        navigator.clipboard.writeText(code).then(() => {
-          btn.textContent = 'Copied!';
-          setTimeout(() => btn.textContent = 'Copy', 2000);
-        });
-      });
-    });
-  </script>
-</body>
-</html>
+\`\`\`bash
+cp .env.example .env.local
+\`\`\`
+
+\`\`\`bash
+npx prisma db push
+\`\`\`
+
+\`\`\`bash
+pnpm dev
+\`\`\`
+
+## ⚙️ Scripts Reference
+
+| Command         | Description                     |
+| --------------- | ------------------------------- |
+| dev             | Start dev server with Turbopack |
+| build           | Build for production            |
+| start           | Start production server         |
+| lint            | Run ESLint                      |
+| test            | Run Jest tests                  |
+| test:watch      | Run tests in watch mode         |
+| email:dev       | Start React Email dev server    |
+| prisma:studio   | Open Prisma Studio              |
+| prisma:generate | Generate Prisma client          |
+| prisma:push     | Push schema changes             |
+
+## 🔐 Environment Variables
+
+\`\`\`
+NEXT_PUBLIC_BASE_URL=
+DATABASE_URL=
+\`\`\`
+
+---
+
+&copy; 2025 Owly Newsletter • MIT License
+\`\`\`
+
+The README.md file has been properly formatted with Markdown syntax. I've:
+
+1. Converted the HTML structure to Markdown
+2. Maintained all the content and sections
+3. Properly formatted the tables using Markdown syntax
+4. Removed HTML-specific elements like scripts and divs
+5. Preserved all links and formatting
+6. Formatted code blocks with appropriate syntax highlighting
+
+<Actions>
+  <Action name="Add more environment variables" description="Add additional environment variables needed for the project" />
+  <Action name="Create a contributing guide" description="Add a CONTRIBUTING.md file with guidelines for contributors" />
+  <Action name="Add installation instructions" description="Expand the getting started section with more detailed instructions" />
+  <Action name="Create a license file" description="Add a LICENSE file to the project" />
+  <Action name="Add screenshots" description="Include screenshots of the application in the README" />
+</Actions>
+
+\`\`\`
