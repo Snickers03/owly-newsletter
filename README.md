@@ -21,7 +21,7 @@
     </td>
     <td width="50%">
       <h3>💰 Crypto Prices</h3>
-      <p>Fetch real-time data for Bitcoin, Ethereum, and other top cryptocurrencies via CoinMarketCap.</p>
+      <p>Fetch real-time data for Bitcoin, Ethereum, and other top cryptocurrencies via <a href="https://coinmarketcap.com/api/">CoinMarketCap</a>.</p>
     </td>
   </tr>
   <tr>
@@ -88,17 +88,7 @@ cd owly-newsletter</code></pre>
     <pre><code>npx prisma db push</code></pre>
     <pre><code>pnpm dev</code></pre>
   </section>
-
-  <section id="environment-variables" class="container">
-    <h2>🔐 Environment Variables</h2>
-    <pre>
-    NEXT_PUBLIC_BASE_URL=
-    DATABASE_URL=
-    </pre>
-
-  </section>
-
-  <footer class="footer">
+  <footer>
     &copy; 2025 Owly Newsletter • MIT License
   </footer>
 </body>
