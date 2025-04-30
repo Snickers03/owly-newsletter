@@ -7,7 +7,7 @@
 
 **Create and schedule your very own custom newsletters with weather updates, crypto prices, and daily quotes.**
 
-[Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [Scripts](#️-scripts-reference) • [Environment Variables](#-environment-variables)
+[Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [Environment Variables](#-environment-variables)
 
 </div>
 
@@ -88,20 +88,7 @@ cd owly-newsletter</code></pre>
     <pre><code>npx prisma db push</code></pre>
     <pre><code>pnpm dev</code></pre>
   </section> 
-    <table>
-      <tr><th>Command</th><th>Description</th></tr>
-      <tr><td>dev</td><td>Start dev server with Turbopack</td></tr>
-      <tr><td>build</td><td>Build for production</td></tr>
-      <tr><td>start</td><td>Start production server</td></tr>
-      <tr><td>lint</td><td>Run ESLint</td></tr>
-      <tr><td>test</td><td>Run Jest tests</td></tr>
-      <tr><td>test:watch</td><td>Run tests in watch mode</td></tr>
-      <tr><td>email:dev</td><td>Start React Email dev server</td></tr>
-      <tr><td>prisma:studio</td><td>Open Prisma Studio</td></tr>
-      <tr><td>prisma:generate</td><td>Generate Prisma client</td></tr>
-      <tr><td>prisma:push</td><td>Push schema changes</td></tr>
-    </table>
-  </section>
+
 
   <section id="environment-variables" class="container">
     <h2>🔐 Environment Variables</h2>
