@@ -3,8 +3,8 @@ import { resend } from "@/lib/resend";
 import { z } from "zod";
 
 import NewsletterTemplateEmail from "../../../emails/newsletter-template-email";
-import { fetchCryptoData } from "../services/cryptoService";
-import { fetchWeatherData } from "../services/weatherService";
+import { fetchCryptoData } from "../services/crypto.service";
+import { fetchWeatherData } from "../services/weather.service";
 import { publicProcedure, router } from "../trpc";
 
 export const newsletterRouter = router({

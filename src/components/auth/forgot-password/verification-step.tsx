@@ -1,7 +1,7 @@
 "use client";
 
+import { enterTokenSchema } from "@/lib/schemas/auth.schema";
 import { cn } from "@/lib/utils";
-import { enterTokenSchema } from "@/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";

@@ -1,6 +1,6 @@
 "use client";
 
-import { changePasswordSchema } from "@/schemas/auth.schema";
+import { changePasswordSchema } from "@/lib/schemas/auth.schema";
 import { useUserStore } from "@/store/user-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle } from "lucide-react";

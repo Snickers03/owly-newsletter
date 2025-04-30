@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { updateNameSchema } from "@/schemas/auth.schema";
+import { updateNameSchema } from "@/lib/schemas/auth.schema";
 import { useUserStore, type ExtendedUser } from "@/store/user-store";
 import { UploadButton } from "@/utils/uploadthing";
 import { zodResolver } from "@hookform/resolvers/zod";

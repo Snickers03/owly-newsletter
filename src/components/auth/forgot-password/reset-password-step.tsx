@@ -1,6 +1,6 @@
 "use client";
 
-import { enterNewPasswordSchema } from "@/schemas/auth.schema";
+import { enterNewPasswordSchema } from "@/lib/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
