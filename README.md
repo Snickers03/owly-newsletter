@@ -10,7 +10,7 @@
 [Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [Environment Variables](#-environment-variables)
 
 </div>
-
+![Preview of the application](/public/readme-preview.png)
 ## 🚀 Features
 
 <table>
