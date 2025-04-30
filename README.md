@@ -1,59 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
-  <header>
-    <h1>📬 Owly Newsletter</h1>
-    <p>Create and schedule your custom newsletters with weather updates, crypto prices, and daily quotes.</p>
-    <nav>
-      <a href="#features">Features</a>
-      <a href="#tech-stack">Tech Stack</a>
-      <a href="#getting-started">Getting Started</a>
-      <a href="#scripts-reference">Scripts</a>
-      <a href="#environment-variables">Env Vars</a>
-    </nav>
-  </header>
+  <div align="center">
 
-  <section id="features" class="container">
-    <h2>🚀 Features</h2>
-    <div class="grid-2">
-      <div class="feature">
-        <h3>🌤️ Weather Forecasts</h3>
-        <p>Get current weather and forecasts from <a href="https://openweathermap.org/" target="_blank">OpenWeatherMap</a>.</p>
-      </div>
-      <div class="feature">
-        <h3>💰 Crypto Prices</h3>
-        <p>Fetch real-time data for Bitcoin, Ethereum, and more via CoinMarketCap.</p>
-      </div>
-      <div class="feature">
-        <h3>💬 Daily Quotes</h3>
-        <p>Spice up your day with inspiring or funny quotes.</p>
-      </div>
-      <div class="feature">
-        <h3>⏱️ Custom Intervals</h3>
-        <p>Schedule newsletters hourly, daily, or weekly.</p>
-      </div>
-      <div class="feature">
-        <h3>🔐 User Auth</h3>
-        <p>Secure signup, login, and session management with Prisma & Argon2.</p>
-      </div>
-      <div class="feature">
-        <h3>🔄 Drag-and-Drop Layout</h3>
-        <p>Reorder modules with <code>@dnd-kit</code>.</p>
-      </div>
-      <div class="feature">
-        <h3>📧 Rich Templating</h3>
-        <p>Build email layouts with <code>@react-email/components</code> and Resend.</p>
-      </div>
-      <div class="feature">
-        <h3>📊 Analytics</h3>
-        <p>Track opens, clicks, and behavior with PostHog.</p>
-      </div>
-      <div class="feature" style="grid-column: span 2;">
-        <h3>🖼️ Image Uploads</h3>
-        <p>Attach images using UploadThing.</p>
-      </div>
-    </div>
-  </section>
+# 📬 Owly Newsletter
+
+**Create and schedule your very own custom newsletters with weather updates, crypto prices, and daily quotes.**
+
+[Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [Scripts](#️-scripts-reference) • [Environment Variables](#-environment-variables)
+
+</div>
+
+## 🚀 Features
+
+<table>
+  <tr>
+    <td width="50%">
+      <h3>🌤️ Weather Forecasts</h3>
+      <p>Get current weather and forecasts from <a href="https://openweathermap.org/">OpenWeatherMap</a> (or your favorite API).</p>
+    </td>
+    <td width="50%">
+      <h3>💰 Crypto Prices</h3>
+      <p>Fetch real-time data for Bitcoin, Ethereum, and other top cryptocurrencies via CoinMarketCap.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>💬 Daily Quotes</h3>
+      <p>Spice up your day with inspiring, funny, or thought-provoking quotes.</p>
+    </td>
+    <td width="50%">
+      <h3>⏱️ Custom Intervals</h3>
+      <p>Schedule newsletters hourly, daily, or weekly—tailor the frequency to your needs.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>🔐 User Authentication</h3>
+      <p>Secure signup, login, and session management with Prisma and Argon2.</p>
+    </td>
+    <td width="50%">
+      <h3>🔄 Drag‑and-Drop Layout</h3>
+      <p>Use <code>@dnd-kit</code> to reorder modules (weather, crypto, quotes) with ease.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>📧 Rich Templating</h3>
+      <p>Build email layouts with <code>@react-email/components</code> and send via Resend.</p>
+    </td>
+    <td width="50%">
+      <h3>📊 Analytics</h3>
+      <p>Track opens, clicks, and user behavior with PostHog.</p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <h3>🖼️ Image Uploads</h3>
+      <p>Attach images to your newsletter modules using UploadThing.</p>
+    </td>
+  </tr>
+</table>
 
   <section id="tech-stack" class="container">
     <h2>📦 Tech Stack</h2>
