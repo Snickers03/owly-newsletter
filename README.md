@@ -79,7 +79,7 @@
     </table>
   </section>
 
-  <section id="getting-started" class="container">
+  <section id="getting-started">
     <h2>🎯 Getting Started</h2>
     <pre><code>git clone https://github.com/snickers03/owly-newsletter.git
 cd owly-newsletter</code></pre>
@@ -87,8 +87,21 @@ cd owly-newsletter</code></pre>
     <pre><code>cp .env.example .env.local</code></pre>
     <pre><code>npx prisma db push</code></pre>
     <pre><code>pnpm dev</code></pre>
+  </section> 
+  
+  
+  <section id="environment-variables">
+    <h2>🔐 Environement Variables</h2>
+    <pre><code>DATABASE_URL=
+NEXT_PUBLIC_API=</code></pre>
   </section>
-  <footer>
+
+<code>
+  DATABASE_URL=
+
+</code>
+
+  <footer align="center">
     &copy; 2025 Owly Newsletter • MIT License
   </footer>
 </body>
