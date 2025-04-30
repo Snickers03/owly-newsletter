@@ -66,15 +66,14 @@
     <h2>📦 Tech Stack</h2>
     <table>
       <tr><th>Area</th><th>Tools</th></tr>
-      <tr><td>Framework</td><td>Next.js 15 + Turbopack</td></tr>
-      <tr><td>Styling</td><td>Tailwind CSS + sonner, tw-animate-css</td></tr>
+      <tr><td>Framework</td><td>Next.js 15</td></tr>
+      <tr><td>Styling</td><td>Tailwind CSS + shadncn</td></tr>
       <tr><td>Forms</td><td>React Hook Form + Zod</td></tr>
       <tr><td>State Mgmt</td><td>Zustand & React Query</td></tr>
-      <tr><td>Auth</td><td>tRPC + Prisma + Argon2</td></tr>
-      <tr><td>DB</td><td>PostgreSQL (NeonDB)</td></tr>
+      <tr><td>DB</td><td>PostgreSQL</td></tr>
       <tr><td>Email</td><td>React Email + Resend</td></tr>
       <tr><td>API Clients</td><td>CoinMarketCap, OpenWeatherMap</td></tr>
-      <tr><td>Uploads</td><td>UploadThing + @uploadthing/react</td></tr>
+      <tr><td>Uploads</td><td>UploadThing</td></tr>
       <tr><td>Analytics</td><td>PostHog</td></tr>
     </table>
   </section>
@@ -102,8 +101,8 @@ NEXT_PUBLIC_POSTHOG_KEY=
 NEXT_PUBLIC_POSTHOG_HOST=</code></pre>
   </section>
 
-  <footer align="center">
+  <div align="center">
     &copy; 2025 Owly Newsletter • MIT License
-  </footer>
+  </div>
 </body>
 </html>
