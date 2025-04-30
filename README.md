@@ -92,14 +92,15 @@ cd owly-newsletter</code></pre>
   
   <section id="environment-variables">
     <h2>🔐 Environement Variables</h2>
-    <pre><code>DATABASE_URL=
-NEXT_PUBLIC_API=</code></pre>
+    <pre><code>NEXT_PUBLIC_BASE_URL=
+DATABASE_URL=
+RESEND_API_KEY=
+UPLOADTHING_TOKEN=
+COINMARKET_API_KEY=
+WEATHER_API_KEY=
+NEXT_PUBLIC_POSTHOG_KEY=
+NEXT_PUBLIC_POSTHOG_HOST=</code></pre>
   </section>
-
-<code>
-  DATABASE_URL=
-
-</code>
 
   <footer align="center">
     &copy; 2025 Owly Newsletter • MIT License
