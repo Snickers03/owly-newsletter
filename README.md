@@ -87,8 +87,7 @@ cd owly-newsletter</code></pre>
     <pre><code>cp .env.example .env.local</code></pre>
     <pre><code>npx prisma db push</code></pre>
     <pre><code>pnpm dev</code></pre>
-  </section> 
-
+  </section>
 
   <section id="environment-variables" class="container">
     <h2>🔐 Environment Variables</h2>
@@ -102,17 +101,5 @@ cd owly-newsletter</code></pre>
   <footer class="footer">
     &copy; 2025 Owly Newsletter • MIT License
   </footer>
-
-  <script>
-    document.querySelectorAll('.copy-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const code = btn.nextElementSibling.textContent;
-        navigator.clipboard.writeText(code).then(() => {
-          btn.textContent = 'Copied!';
-          setTimeout(() => btn.textContent = 'Copy', 2000);
-        });
-      });
-    });
-  </script>
 </body>
 </html>
