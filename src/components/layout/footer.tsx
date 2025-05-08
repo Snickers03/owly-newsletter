@@ -48,7 +48,7 @@ export const Footer = () => {
           <p className='text-xs text-gray-500 dark:text-gray-400'>
             Made with <span className='text-red-500'>❤️</span> by{" "}
             <a
-              href='https://niklas.sh?utm_source=owly-newsletter-niklas-sh&utm_medium=website&utm_campaign=nb-showcase'
+              href='https://niklas.sh?utm_source=owly-newsletter.niklas.sh&utm_medium=website&utm_campaign=nb-showcase'
               target='_blank'
               rel='noopener noreferrer'
               className='underline-offset-4 hover:underline'
