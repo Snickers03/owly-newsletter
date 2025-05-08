@@ -9,6 +9,20 @@ import ResetPasswordTemplate from "../../../emails/reset-password-template";
 import VerifyTokenTemplate from "../../../emails/verify-token-template";
 import { publicProcedure, router } from "../trpc";
 
+/**
+ * Authentication Router Endpoints:
+ *
+ * * login: Authenticate with email and password, returns user and session.
+ * * signUp: Register a new user, hash password, send verification token email, returns user and session.
+ * * loginWithToken: Authenticate using session token, returns user and session.
+ * * invalidateSession: Invalidate a session token.
+ * * verifyEmail: Verify user's email using a verification token.
+ * * resendVerificationToken: Resend email verification token to user.
+ * * createResetPasswordToken: Generate and email a password reset token.
+ * * verifyResetPasswordToken: Verify the validity of a password reset token.
+ * * updatePassword: Update the user's password and clear the reset token.
+ */
+
 const ERRORS = {
   NOT_FOUND: "User not found.",
   INVALID_CREDENTIALS: "Invalid credentials.",

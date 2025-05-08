@@ -13,7 +13,7 @@
 <div align="center">
   <img src="/public/readme-preview.png" alt="Preview of the application" />
 </div>
-
+ 
 ## 🚀 Features
 
 <table>
